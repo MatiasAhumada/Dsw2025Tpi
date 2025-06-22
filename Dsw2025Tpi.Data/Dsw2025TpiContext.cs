@@ -1,5 +1,5 @@
-﻿using Dsw2025Tpi.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Dsw2025Tpi.Domain.Entities;
 
 namespace Dsw2025Tpi.Data;
 
