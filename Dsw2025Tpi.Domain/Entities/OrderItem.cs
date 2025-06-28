@@ -10,7 +10,7 @@ using Dsw2025Tpi.Domain.Entities;public class OrderItem : EntityBase
     public int _quantity { get; set; }
     public decimal _unitPrice { get; set; }
 
-    public decimal _subtotal => _quantity * _unitPrice; 
+    public decimal _subtotal { get; set; } 
 
     
     public OrderItem() { }
@@ -23,5 +23,6 @@ using Dsw2025Tpi.Domain.Entities;public class OrderItem : EntityBase
         _product = product;
         _quantity = quantity;
         _unitPrice = unitPrice;
+        _subtotal = quantity * unitPrice;
     }
 }

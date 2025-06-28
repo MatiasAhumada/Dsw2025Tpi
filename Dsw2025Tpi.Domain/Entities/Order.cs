@@ -4,7 +4,7 @@ using Dsw2025Tpi.Domain.Entities;
 public class Order : EntityBase
 {
 
-    public Guid _customerId { get; set; }
+    public string _customerId { get; set; }
     public DateTime _date { get; }
     public string _shippingAddress { get; set; }
     public string _billingAddress { get; set; }
@@ -14,8 +14,9 @@ public class Order : EntityBase
     
     public OrderStatus _status { get; set; }
     public List<OrderItem> _orderItems { get; set; }
+    
 
-    public Order(Guid customerId, string shippingAddress, string billingAddress, string notes)
+    public Order(string customerId, string shippingAddress, string billingAddress, string notes)
     {
         _customerId = customerId;
         _date = DateTime.UtcNow;
