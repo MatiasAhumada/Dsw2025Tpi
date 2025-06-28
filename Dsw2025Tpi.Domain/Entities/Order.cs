@@ -15,7 +15,7 @@ public class Order : EntityBase
     public OrderStatus _status { get; set; }
     public List<OrderItem> _orderItems { get; set; }
     
-
+    
     public Order(string customerId, string shippingAddress, string billingAddress, string notes)
     {
         _customerId = customerId;

@@ -38,13 +38,6 @@ public class ProductsController : ControllerBase
 
     public async Task<IActionResult> PostProducts([FromBody] ModeloProducto.Request request)
     {
-        if (!ModelState.IsValid)
-        {
-            var errores = ModelState.Where(e => e.Value.Errors.Count > 0).ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray());
-
-            return BadRequest(new { errores });
-        }
-
         try
         {
             var product = await _service.AddProduct(request);
@@ -64,62 +57,70 @@ public class ProductsController : ControllerBase
         }
     }
 
-        [HttpGet]
-        [Route("{id}")]
-        public async Task<IActionResult> GetProductById(Guid id)
-        {
-            var producto = await _service.GetProductById(id);
+    [HttpGet]
+    [Route("{id}")]
+    public async Task<IActionResult> GetProductById(Guid id)
+    {
+        var producto = await _service.GetProductById(id);
 
-            if (producto == null)
-            {
-                return NotFound("No se encontró el producto.");
-            }
-            
-            return Ok(producto);
+        if (producto == null)
+        {
+            return NotFound("No se encontró el producto.");
+        }
+
+        return Ok(producto);
+    }
 
     [HttpPut]
     [Route("{id}")]
     public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] ModeloProductoAct.RequestMod request)
+    {
+        var products = await _service.GetProductById(id);
+        var existingProduct = await _service.GetProductBySku(request.Sku);
+        if (products == null)
         {
-            var products = await _service.GetProductById(id);
-            
-            if (products == null)
-            {
-                return NotFound("No se encontró el producto.");
-            }
-            if (request.CurrentUnitPrice < 0)
-            {
-                return BadRequest("El precio ingresado no es valido");
-            }
-
-            products.Sku = request.Sku;
-            products.Name = request.Name;
-            products.Description = request.Description;
-            products.CurrentUnitPrice = request.CurrentUnitPrice;
-            products.StockQuantity = request.StockQuantity;
-
-            await _service.Update(products);
-            return NoContent();
+            return NotFound("No se encontró el producto.");
+        }
+        if (request.CurrentUnitPrice < 0)
+        {
+            return BadRequest("El precio ingresado no es valido");
+        }
+        if (existingProduct != null && existingProduct.InternalCode != id)
+        {
+            return Conflict("Ya existe un producto con el mismo SKU.");
         }
 
-            
 
-    
+        products.Sku = request.Sku;
+        products.Name = request.Name;
+        products.Description = request.Description;
+        products.CurrentUnitPrice = request.CurrentUnitPrice;
+        products.StockQuantity = request.StockQuantity;
+
+        await _service.Update(products);
+        return NoContent();
+    }
+
     [HttpPatch]
     [Route("{id}")]
     public async Task<IActionResult> DisableProduct(Guid id)
     {
-
-            var producto = await _service.GetProductById(id);
-            if (producto == null)
-            {
-                return NotFound("No se encontró el producto.");
-            }
-
-            producto.IsActive = false;
-            await _service.Update(producto);
-            return NoContent();
+        
+        var producto = await _service.GetProductById(id);
+        if (producto == null)
+        {
+            return NotFound("No se encontró el producto.");
+        }
+        if (producto.IsActive == false)
+        {
+            return BadRequest("El producto ya está deshabilitado.");
         }
 
-        }
+        producto.IsActive = false;
+        await _service.Update(producto);
+        return NoContent();
+    }
+
+}
+        
     

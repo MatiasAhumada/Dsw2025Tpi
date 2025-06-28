@@ -25,10 +25,10 @@ public class OrderService
         if (product.StockQuantity < item.Quantity)
             throw new InvalidOperationException($"Stock insuficiente para el producto {product.Name}.");
 
-        // Decrementar stock
+        // Esto lo que hace es sacar stock
         product.StockQuantity -= item.Quantity;
 
-        // Crear item de la orden
+        // Crea un item de la orden
         orderItems.Add(new OrderItem(
             orderId: Guid.Empty,
             order: null!,
@@ -57,7 +57,7 @@ public class OrderService
         await _repository.Add(item);
     }
 
-    // Actualizar el stock de los productos
+    // Actualiza el stock de los productos
     foreach (var item in orderItems)
     {
         var product = await _repository.GetById<Product>(item._productId);
