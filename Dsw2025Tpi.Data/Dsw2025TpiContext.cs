@@ -19,11 +19,20 @@ public class Dsw2025TpiContext : DbContext
             entity.Property(e => e.Sku).IsRequired().HasMaxLength(50);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Description).HasMaxLength(500);
-            entity.Property(e => e.CurrentUnitPrice).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.CurrentUnitPrice).IsRequired().HasColumnType("decimal(18,2)");
             entity.Property(e => e.StockQuantity).IsRequired();
             entity.Property(e => e.IsActive).IsRequired();
         });
+
+       
+
+        modelBuilder.Entity<Product>()      //
+            .HasIndex(p => p.Sku)           //Estas lineas son para garantizar que el SKU sea unico
+            .IsUnique();                    //
+
+
         base.OnModelCreating(modelBuilder);
+
     }
 
   

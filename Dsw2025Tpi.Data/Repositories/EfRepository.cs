@@ -43,6 +43,12 @@ public class EfRepository: IRepository
         return await Include(_context.Set<T>(), include).FirstOrDefaultAsync(e => e.InternalCode == id);
     }
 
+    //NO usada pero posible uso si se desea remplazar la busqueda de id por sku (mas amigable para el usuario)
+    public async Task<T?> GetBySku<T>(string sku, params string[] include) where T : Product
+    {
+        return await Include(_context.Set<T>(), include).FirstOrDefaultAsync(e => e.Sku == sku);
+    }
+
     public async Task<IEnumerable<T>?> GetFiltered<T>(Expression<Func<T, bool>> predicate, params string[] include) where T : EntityBase
     {
         return await Include(_context.Set<T>(), include).Where(predicate).ToListAsync();
