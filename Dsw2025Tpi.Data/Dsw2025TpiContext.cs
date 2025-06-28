@@ -23,11 +23,16 @@ public class Dsw2025TpiContext : DbContext
             entity.Property(e => e.StockQuantity).IsRequired();
             entity.Property(e => e.IsActive).IsRequired();
         });
+
+       
+
         modelBuilder.Entity<Product>()      //
             .HasIndex(p => p.Sku)           //Estas lineas son para garantizar que el SKU sea unico
             .IsUnique();                    //
 
+
         base.OnModelCreating(modelBuilder);
+
     }
 
   

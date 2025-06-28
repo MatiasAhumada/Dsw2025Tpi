@@ -33,7 +33,6 @@ namespace Dsw2025Tpi.Data.Migrations
                         .HasColumnType("decimal(18,2)");
                         
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
