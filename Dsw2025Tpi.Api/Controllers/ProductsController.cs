@@ -33,13 +33,22 @@ public class ProductsController : ControllerBase
     }
 
 
-    [HttpPost()]
+
+    [HttpPost]
+
     public async Task<IActionResult> PostProducts([FromBody] ModeloProducto.Request request)
     {
+        if (!ModelState.IsValid)
+        {
+            var errores = ModelState.Where(e => e.Value.Errors.Count > 0).ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray());
+
+            return BadRequest(new { errores });
+        }
+
         try
         {
             var product = await _service.AddProduct(request);
-            return Ok(product);
+            return CreatedAtAction(nameof(GetProductById), new { id = product.InternalCode }, product);
         }
         catch (ArgumentException ae)
         {
@@ -55,23 +64,18 @@ public class ProductsController : ControllerBase
         }
     }
 
-    
-
-
-    [HttpGet]
-    [Route("{id}")]
-    public async Task<IActionResult> GetProductById(Guid id)
-    {
-        var producto = await _service.GetProductById(id);
-
-        if (producto == null)
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> GetProductById(Guid id)
         {
-            return NotFound("No se encontró el producto.");
-        }
+            var producto = await _service.GetProductById(id);
 
-        return Ok(producto);
-
-    }
+            if (producto == null)
+            {
+                return NotFound("No se encontró el producto.");
+            }
+            
+            return Ok(producto);
 
     [HttpPut]
     [Route("{id}")]
@@ -105,15 +109,17 @@ public class ProductsController : ControllerBase
     [Route("{id}")]
     public async Task<IActionResult> DisableProduct(Guid id)
     {
-        var producto = await _service.GetProductById(id);
-        if (producto == null)
-        {
-            return NotFound("No se encontró el producto.");
+
+            var producto = await _service.GetProductById(id);
+            if (producto == null)
+            {
+                return NotFound("No se encontró el producto.");
+            }
+
+            producto.IsActive = false;
+            await _service.Update(producto);
+            return NoContent();
         }
 
-        producto.IsActive = false;
-        await _service.Update(producto);
-        return NoContent();
-
-    }
-}
+        }
+    
