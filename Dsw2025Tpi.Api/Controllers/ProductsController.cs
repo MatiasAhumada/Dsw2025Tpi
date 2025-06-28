@@ -36,7 +36,6 @@ public class ProductsController : ControllerBase
 
 
     [HttpPost]
-    [HttpPost()]
     public async Task<IActionResult> PostProducts([FromBody] ModeloProducto.Request request)
     {
         try
@@ -56,36 +55,36 @@ public class ProductsController : ControllerBase
         {
             return Problem("Se produjo un error al guardar el producto");
         }
-
-    [HttpGet]
-    [Route("{id}")]
-    public async Task<IActionResult> GetProductById(Guid id)
-    {
-        var producto = await _service.GetProductById(id);
-
-        if (producto == null)
-        {
-            return NotFound("No se encontró el producto.");
-        }
-
-        return Ok(producto);
-
     }
 
-
-    [HttpPatch]
-    [Route("{id}")]
-    public async Task<IActionResult> DisableProduct(Guid id)
-    {
-        var producto = await _service.GetProductById(id);
-        if (producto == null)
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> GetProductById(Guid id)
         {
-            return NotFound("No se encontró el producto.");
+            var producto = await _service.GetProductById(id);
+
+            if (producto == null)
+            {
+                return NotFound("No se encontró el producto.");
+            }
+
+            return Ok(producto);
+
         }
+      
+        [HttpPatch]
+        [Route("{id}")]
+        public async Task<IActionResult> DisableProduct(Guid id)
+        {
+            var producto = await _service.GetProductById(id);
+            if (producto == null)
+            {
+                return NotFound("No se encontró el producto.");
+            }
 
-        producto.IsActive = false;
-        await _service.Update(producto);
-        return NoContent();
+            producto.IsActive = false;
+            await _service.Update(producto);
+            return NoContent();
 
+        }
     }
-}
