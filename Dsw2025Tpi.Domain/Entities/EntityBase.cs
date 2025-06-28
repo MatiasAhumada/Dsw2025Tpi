@@ -4,7 +4,7 @@ public abstract class EntityBase
 {
     protected EntityBase()
     {
-        Id = Guid.NewGuid();
+        InternalCode = Guid.NewGuid();
     }
-    public Guid Id { get; }
+    public Guid InternalCode { get; set; }
 }

@@ -1,9 +1,9 @@
 ﻿using Dsw2025Tpi.Domain.Entities;
-using Dsw2025Tpi.Domain.Interfaces;
+using Dsw2025Tpi.Domain;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 
-namespace Dsw2025Tpi.Data.Repositories;
+namespace Dsw2025Tpi.Data;
 
 public class EfRepository: IRepository
 {
@@ -40,7 +40,13 @@ public class EfRepository: IRepository
 
     public async Task<T?> GetById<T>(Guid id, params string[] include) where T : EntityBase
     {
-        return await Include(_context.Set<T>(), include).FirstOrDefaultAsync(e => e.Id == id);
+        return await Include(_context.Set<T>(), include).FirstOrDefaultAsync(e => e.InternalCode == id);
+    }
+
+    //NO usada pero posible uso si se desea remplazar la busqueda de id por sku (mas amigable para el usuario)
+    public async Task<T?> GetBySku<T>(string sku, params string[] include) where T : Product
+    {
+        return await Include(_context.Set<T>(), include).FirstOrDefaultAsync(e => e.Sku == sku);
     }
 
     public async Task<IEnumerable<T>?> GetFiltered<T>(Expression<Func<T, bool>> predicate, params string[] include) where T : EntityBase
