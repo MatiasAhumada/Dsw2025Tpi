@@ -40,9 +40,7 @@ public class ProductsController : ControllerBase
     {
         if (!ModelState.IsValid)
         {
-            var errores = ModelState
-                .Where(e => e.Value.Errors.Count > 0)
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray());
+            var errores = ModelState.Where(e => e.Value.Errors.Count > 0).ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray());
 
             return BadRequest(new { errores });
         }
@@ -97,4 +95,4 @@ public class ProductsController : ControllerBase
         }
 
         }
-    }
+    
