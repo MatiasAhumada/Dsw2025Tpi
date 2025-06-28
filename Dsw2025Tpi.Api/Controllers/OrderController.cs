@@ -30,8 +30,7 @@ public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest.Reque
     try
     {
         var order = await _orderService.CreateOrderAsync(request);
-
-        // Mapear la entidad Order a OrderRecord.ResponseOrder
+        
         var response = new CreateOrderRequest.ResponseOrder(
             OrderId: order.InternalCode,
             CustomerId: order._customerId,
@@ -59,7 +58,29 @@ public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest.Reque
     [HttpGet("{id}")]
     public async Task<IActionResult> GetOrderById(Guid id)
     {
-        return Ok();
+        var order = await _orderService.GetById(id);
+
+        if (order == null)
+            return NotFound(new { error = "Orden no encontrada" });
+
+        var response = new CreateOrderRequest.ResponseOrder(
+            OrderId: order.InternalCode,
+            CustomerId: order._customerId,
+            ShippingAddress: order._shippingAddress,
+            BillingAddress: order._billingAddress,
+            CreatedAt: order._date,
+            TotalAmount: order._totalAmount,
+            OrderItems: order._orderItems.Select(item => new CreateOrderRequest.ResponseOrderItem(
+                ProductId: item._productId,
+                Name: item._product.Name,
+                Description: item._product.Description,
+                UnitPrice: item._unitPrice,
+                Quantity: item._quantity,
+                Subtotal: item._subtotal
+            )).ToList()
+        );
+
+        return Ok(response);
     }
 }
     
