@@ -23,11 +23,10 @@ public class ProductsManagementService
         if (id == Guid.Empty) throw new ArgumentException("El ID del producto no puede ser vacío", nameof(id));
         return await _repository.GetById<Product>(id);
     }
-
-    public async Task<Product> GetProductBySku(string sku)
+    public async Task<Product?> GetProductBySku(string sku)
     {
         if (string.IsNullOrWhiteSpace(sku)) throw new ArgumentException("El SKU del producto no puede ser nulo o vacío", nameof(sku));
-        return await _repository.First<Product>(p => p.Sku == sku);
+        return await _repository.GetBySku<Product>(sku);
     }
 
     public async Task<Product> Update(Product product)

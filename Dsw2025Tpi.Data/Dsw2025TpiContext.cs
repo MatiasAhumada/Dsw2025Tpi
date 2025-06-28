@@ -12,7 +12,7 @@ public class Dsw2025TpiContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Configure your entities here
+        
         modelBuilder.Entity<Product>(entity =>
         {
             entity.HasKey(e => e.InternalCode);
