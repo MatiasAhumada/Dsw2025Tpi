@@ -4,8 +4,6 @@ using Dsw2025Tpi.Application.Services;
 using Dsw2025Tpi.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 
 namespace Dsw2025Tpi.Api.Controllers;
@@ -35,7 +33,9 @@ public class ProductsController : ControllerBase
     }
 
 
+
     [HttpPost]
+
     public async Task<IActionResult> PostProducts([FromBody] ModeloProducto.Request request)
     {
         if (!ModelState.IsValid)
@@ -77,12 +77,39 @@ public class ProductsController : ControllerBase
             
             return Ok(producto);
 
-        }
-      
-        [HttpPatch]
-        [Route("{id}")]
-        public async Task<IActionResult> DisableProduct(Guid id)
+    [HttpPut]
+    [Route("{id}")]
+    public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] ModeloProductoAct.RequestMod request)
         {
+            var products = await _service.GetProductById(id);
+            
+            if (products == null)
+            {
+                return NotFound("No se encontró el producto.");
+            }
+            if (request.CurrentUnitPrice < 0)
+            {
+                return BadRequest("El precio ingresado no es valido");
+            }
+
+            products.Sku = request.Sku;
+            products.Name = request.Name;
+            products.Description = request.Description;
+            products.CurrentUnitPrice = request.CurrentUnitPrice;
+            products.StockQuantity = request.StockQuantity;
+
+            await _service.Update(products);
+            return NoContent();
+        }
+
+            
+
+    
+    [HttpPatch]
+    [Route("{id}")]
+    public async Task<IActionResult> DisableProduct(Guid id)
+    {
+
             var producto = await _service.GetProductById(id);
             if (producto == null)
             {
