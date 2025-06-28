@@ -5,6 +5,7 @@ using Dsw2025Tpi.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using System.Linq;
 
 
@@ -35,7 +36,6 @@ public class ProductsController : ControllerBase
     }
 
 
-    [HttpPost]
     [HttpPost()]
     public async Task<IActionResult> PostProducts([FromBody] ModeloProducto.Request request)
     {
@@ -56,6 +56,7 @@ public class ProductsController : ControllerBase
         {
             return Problem("Se produjo un error al guardar el producto");
         }
+    }
 
     [HttpGet]
     [Route("{id}")]
@@ -71,6 +72,31 @@ public class ProductsController : ControllerBase
         return Ok(producto);
 
     }
+
+    [HttpPut]
+    [Route("{id}")]
+    public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] ModeloProductoAct.Request request)
+        {
+            var products = await _service.GetProductById(id);
+            
+            if (products == null)
+            {
+                return NotFound("No se encontró el producto.");
+            }
+            if (request.CurrentUnitPrice < 0)
+            {
+                return BadRequest("El precio ingresado no es valido");
+            }
+
+            products.Sku = request.Sku;
+            products.Name = request.Name;
+            products.Description = request.Description;
+            products.CurrentUnitPrice = request.CurrentUnitPrice;
+            products.StockQuantity = request.StockQuantity;
+
+            await _service.Update(products);
+            return NoContent();
+        }
 
 
     [HttpPatch]

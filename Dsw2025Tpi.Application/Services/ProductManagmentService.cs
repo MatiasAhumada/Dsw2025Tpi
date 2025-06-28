@@ -23,8 +23,8 @@ public class ProductsManagementService
 
     public async Task<ModeloProducto.Response> AddProduct(ModeloProducto.Request request)
     {
-        if (string.IsNullOrWhiteSpace(request.Sku)||
-            string.IsNullOrWhiteSpace(request.Name)||
+        if (string.IsNullOrWhiteSpace(request.Sku) ||
+            string.IsNullOrWhiteSpace(request.Name) ||
             request.CurrentUnitPrice < 0)
         {
             throw new ArgumentException("Valores para el producto no v�lidos");
@@ -36,6 +36,7 @@ public class ProductsManagementService
         var product = new Product(request.Sku, request.Name, request.Description, request.CurrentUnitPrice, request.StockQuantity);
         await _repository.Add(product);
         return new ModeloProducto.Response(product.InternalCode, product.Sku, product.Name, product.Description, product.CurrentUnitPrice, product.StockQuantity);
+    }
 
     public async Task<Product?> GetProductById(Guid id)
     {
