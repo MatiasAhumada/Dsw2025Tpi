@@ -23,11 +23,11 @@ public class Product : EntityBase
         StockQuantity = stock;
         IsActive = true;
     }
-    public required string Sku { get; set; }
-    public required string Name { get; set; }
+    public string Sku { get; set; }
+    public string Name { get; set; }
     public string Description { get; set; }
-    public required decimal CurrentUnitPrice { get; set; }
-    public required int StockQuantity { get; set; }
+    public decimal CurrentUnitPrice { get; set; }
+    public int StockQuantity { get; set; }
     public bool IsActive { get; set; }
 
 }

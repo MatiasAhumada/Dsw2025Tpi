@@ -6,6 +6,7 @@ namespace Dsw2025Tpi.Domain;
 public interface IRepository
 {
     Task<T?> GetById<T>(Guid id, params string[] include) where T : EntityBase;
+    Task<T?> GetBySku<T>(string sku, params string[] include) where T : Product;
     Task<IEnumerable<T>?> GetAll<T>(params string[] include) where T : EntityBase;
     Task<T?> First<T>(Expression<Func<T, bool>> predicate, params string[] include) where T : EntityBase;
     Task<IEnumerable<T>?> GetFiltered<T>(Expression<Func<T, bool>> predicate, params string[] include) where T : EntityBase;
