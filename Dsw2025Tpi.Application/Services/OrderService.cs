@@ -70,5 +70,5 @@ public class OrderService
 
     return order;
 }
-
+    public async Task<Order?> GetProductById(Guid id) => await _repository.GetById<Order>(id);
 }

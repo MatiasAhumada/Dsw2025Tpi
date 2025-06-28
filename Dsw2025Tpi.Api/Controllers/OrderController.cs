@@ -58,7 +58,7 @@ public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest.Reque
     [HttpGet("{id}")]
     public async Task<IActionResult> GetOrderById(Guid id)
     {
-        var order = await _orderService.GetById(id);
+        var order = await _orderService.GetProductById(id);
 
         if (order == null)
             return NotFound(new { error = "Orden no encontrada" });
