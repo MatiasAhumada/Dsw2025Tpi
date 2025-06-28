@@ -12,10 +12,11 @@ public class Product : EntityBase
     public Product(string sku, string name, string desc, decimal price, int stock)
     : base()
     {
-        if (string.IsNullOrWhiteSpace(sku)) throw new ArgumentException("SKU es requerido");
+       /* if (string.IsNullOrWhiteSpace(sku)) throw new ArgumentException("SKU es requerido");
         if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Nombre es requerido");
         if (price <= 0) throw new ArgumentException("Precio inválido");
         if (stock < 0) throw new ArgumentException("Stock no puede ser negativo");
+       */ InternalCode = Guid.NewGuid();
         Sku = sku;
         Name = name;
         Description = desc;
@@ -23,11 +24,11 @@ public class Product : EntityBase
         StockQuantity = stock;
         IsActive = true;
     }
-    public required string Sku { get; set; }
-    public required string Name { get; set; }
+    public string Sku { get; set; }
+    public string Name { get; set; }
     public string Description { get; set; }
-    public required decimal CurrentUnitPrice { get; set; }
-    public required int StockQuantity { get; set; }
+    public decimal CurrentUnitPrice { get; set; }
+    public int StockQuantity { get; set; }
     public bool IsActive { get; set; }
 
 }

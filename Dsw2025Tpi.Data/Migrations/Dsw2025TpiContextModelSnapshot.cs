@@ -29,10 +29,10 @@ namespace Dsw2025Tpi.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("CurrentUnitPrice")
+                        .IsRequired()
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
@@ -50,6 +50,7 @@ namespace Dsw2025Tpi.Data.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("StockQuantity")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.HasKey("InternalCode");
