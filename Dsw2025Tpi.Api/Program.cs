@@ -23,6 +23,7 @@ public class Program
         builder.Services.AddScoped<IRepository, EfRepository>();
         builder.Services.AddTransient<ProductsManagementService>();
         builder.Services.AddTransient<OrderService>();
+        builder.Services.AddTransient<CustomerService>();
         var app = builder.Build();
 
         
