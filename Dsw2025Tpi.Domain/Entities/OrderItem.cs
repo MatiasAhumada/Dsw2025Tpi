@@ -14,7 +14,7 @@ public class OrderItem : EntityBase
 
     public decimal Subtotal { get; set; }
 
-    public OrderItem() { }
+ 
 
     public OrderItem(Guid orderId, Order order, Guid productId, Product product, int quantity, decimal unitPrice)
     {
@@ -26,4 +26,13 @@ public class OrderItem : EntityBase
         UnitPrice = unitPrice;
         Subtotal = quantity * unitPrice;
     }
+    public OrderItem(Guid productId, Product product, int quantity, decimal unitPrice)
+    {
+        ProductId = productId;
+        Product = product;
+        Quantity = quantity;
+        UnitPrice = unitPrice;
+        Subtotal = quantity * unitPrice;
+    }
+   public OrderItem() { }
 }

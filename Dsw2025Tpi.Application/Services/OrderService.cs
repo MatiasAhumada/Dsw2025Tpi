@@ -2,36 +2,35 @@ using Dsw2025Tpi.Domain;
 using Dsw2025Tpi.Domain.Entities;
 using Dsw2025Tpi.Application.Dtos;
 using System.Linq.Expressions;
+using Dsw2025Tpi.Data;
 
 public class OrderService
 {
     private readonly IRepository _repository;
+    private readonly Dsw2025TpiContext _ctx;
 
-    public OrderService(IRepository repository)
+    public OrderService(IRepository repository, Dsw2025TpiContext ctx)
     {
         _repository = repository;
+        _ctx = ctx;
     }
-
-    public async Task<Order> CreateOrderAsync(CreateOrderRequest.RequestOrder request)
+ public async Task<Order> CreateOrderAsync(CreateOrderRequest.RequestOrder request)
     {
-        var orderItems = new List<OrderItem>();
+        var customer = await _ctx.Customers.FindAsync(request.CustomerId);
+        if (customer == null)
+            throw new InvalidOperationException("Cliente no encontrado.");
 
+        var orderItems = new List<OrderItem>();
         foreach (var item in request.OrderItems)
         {
-            var product = await _repository.First<Product>(p => p.InternalCode == item.ProductId);
-
+            var product = await _ctx.Products.FindAsync(item.ProductId);
             if (product == null)
-                throw new InvalidOperationException($"Producto con ID {item.ProductId} no encontrado.");
-
+                throw new InvalidOperationException($"Producto {item.ProductId} no existe.");
             if (product.StockQuantity < item.Quantity)
-                throw new InvalidOperationException($"Stock insuficiente para el producto {product.Name}.");
-
-
-            product.StockQuantity -= item.Quantity;
-
+                throw new InvalidOperationException($"Stock insuficiente para {product.Name}.");
+            
+            product.StockQuantity -= item.Quantity;         // actualizar en memoria
             orderItems.Add(new OrderItem(
-                orderId: Guid.Empty,
-                order: null!,
                 productId: product.InternalCode,
                 product: product,
                 quantity: item.Quantity,
@@ -40,36 +39,22 @@ public class OrderService
         }
 
         var order = new Order(
-               customerId: request.CustomerId,
-               shippingAddress: request.ShippingAddress,
-               billingAddress: request.BillingAddress,
-               notes: request.Notes
-           );
-
+            customerId: request.CustomerId,
+            shippingAddress: request.ShippingAddress,
+            billingAddress: request.BillingAddress,
+            notes: request.Notes
+        );
+        foreach (var oi in orderItems)
+            oi.Order = order;
         order.SetOrderItems(orderItems);
 
-        await _repository.Add(order);
+        _ctx.Orders.Add(order);
 
-        foreach (var item in orderItems)
-        {
-            item.OrderId = order.InternalCode;
-            item.Order = order;
-            await _repository.Add(item);
-        }
-
-        // Actualiza el stock de los productos
-        foreach (var item in orderItems)
-        {
-            var product = await _repository.GetById<Product>(item.ProductId);
-            if (product != null)
-            {
-                product.StockQuantity -= item.Quantity;
-                await _repository.Update(product);
-            }
-        }
+        await _ctx.SaveChangesAsync();
 
         return order;
     }
+
     public async Task<Order?> GetOrderById(Guid id)
     {
         return await _repository.GetById<Order>(

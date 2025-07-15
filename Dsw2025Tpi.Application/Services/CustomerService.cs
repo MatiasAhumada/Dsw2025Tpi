@@ -1,4 +1,4 @@
-using Dsw2025Tpi.Domain.Entities;
+
 using Dsw2025Tpi.Application.Dtos;
 using Dsw2025Tpi.Domain;
 
@@ -13,7 +13,6 @@ public class CustomerService
 
     public async Task<Customer> CreateCustomerAsync(CreateCustomerRequest request)
     {
-        // Validación simple (podés ampliar)
         if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.PhoneNumber))
             throw new ArgumentException("Datos incompletos");
 
