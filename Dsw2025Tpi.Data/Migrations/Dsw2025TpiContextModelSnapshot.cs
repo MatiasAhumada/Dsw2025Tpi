@@ -96,9 +96,6 @@ namespace Dsw2025Tpi.Data.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CustomerInternalCode")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
@@ -118,8 +115,6 @@ namespace Dsw2025Tpi.Data.Migrations
                     b.HasKey("InternalCode");
 
                     b.HasIndex("CustomerId");
-
-                    b.HasIndex("CustomerInternalCode");
 
                     b.ToTable("Orders");
                 });
@@ -166,16 +161,10 @@ namespace Dsw2025Tpi.Data.Migrations
 
             modelBuilder.Entity("Order", b =>
                 {
-                    b.HasOne("Customer", null)
+                    b.HasOne("Customer", "Customer")
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerInternalCode")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Customer");

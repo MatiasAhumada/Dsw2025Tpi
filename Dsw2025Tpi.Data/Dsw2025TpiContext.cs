@@ -49,10 +49,12 @@ public class Dsw2025TpiContext : DbContext
             entity.Property(e => e.TotalAmount).HasColumnType("decimal(18,2)");
 
 
-            entity.HasOne<Customer>()
-             .WithMany(c=>c.Orders)
+            entity.HasOne(o => o.Customer)
+             .WithMany(c => c.Orders)
              .HasForeignKey(o => o.CustomerId)
              .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(o => o.CustomerId);
         });
 
 

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dsw2025Tpi.Data.Migrations
 {
     [DbContext(typeof(Dsw2025TpiContext))]
-    [Migration("20250715015410_InitialCreate")]
+    [Migration("20250715024448_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -99,9 +99,6 @@ namespace Dsw2025Tpi.Data.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CustomerInternalCode")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
@@ -121,8 +118,6 @@ namespace Dsw2025Tpi.Data.Migrations
                     b.HasKey("InternalCode");
 
                     b.HasIndex("CustomerId");
-
-                    b.HasIndex("CustomerInternalCode");
 
                     b.ToTable("Orders");
                 });
@@ -169,16 +164,10 @@ namespace Dsw2025Tpi.Data.Migrations
 
             modelBuilder.Entity("Order", b =>
                 {
-                    b.HasOne("Customer", null)
+                    b.HasOne("Customer", "Customer")
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerInternalCode")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Customer");

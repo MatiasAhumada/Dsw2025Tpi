@@ -48,7 +48,6 @@ namespace Dsw2025Tpi.Data.Migrations
                 {
                     InternalCode = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CustomerInternalCode = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ShippingAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BillingAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -65,12 +64,6 @@ namespace Dsw2025Tpi.Data.Migrations
                         principalTable: "Customers",
                         principalColumn: "InternalCode",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Orders_Customers_CustomerInternalCode",
-                        column: x => x.CustomerInternalCode,
-                        principalTable: "Customers",
-                        principalColumn: "InternalCode",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -139,11 +132,6 @@ namespace Dsw2025Tpi.Data.Migrations
                 name: "IX_Orders_CustomerId",
                 table: "Orders",
                 column: "CustomerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_CustomerInternalCode",
-                table: "Orders",
-                column: "CustomerInternalCode");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_Sku",
