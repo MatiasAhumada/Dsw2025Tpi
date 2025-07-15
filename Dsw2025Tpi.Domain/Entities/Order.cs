@@ -3,33 +3,36 @@ using Dsw2025Tpi.Domain.Entities;
 
 public class Order : EntityBase
 {
+    public Guid CustomerId { get; set; }
+    public Customer Customer { get; set; }
 
-    public string _customerId { get; set; }
-    public DateTime _date { get; }
-    public string _shippingAddress { get; set; }
-    public string _billingAddress { get; set; }
-    public string _notes { get; set; }
-    public decimal _totalAmount { get; set; }
+    public DateTime Date { get; private set; }
+    public string ShippingAddress { get; set; }
+    public string BillingAddress { get; set; }
+    public string Notes { get; set; }
+    public decimal TotalAmount { get; set; }
+    public OrderStatus Status { get; set; }
 
-    
-    public OrderStatus _status { get; set; }
-    public List<OrderItem> _orderItems { get; set; }
-    
-    
-    public Order(string customerId, string shippingAddress, string billingAddress, string notes)
+    public List<OrderItem> OrderItems { get; set; } = new();
+
+    public Order()
     {
-        _customerId = customerId;
-        _date = DateTime.UtcNow;
-        _shippingAddress = shippingAddress;
-        _billingAddress = billingAddress;
-        _notes = notes;
-        _status = OrderStatus.Pending;
+        Date = DateTime.UtcNow;
+        Status = OrderStatus.Pending;
     }
 
-    public void setOrderItems(List<OrderItem> list)
+    public Order(Guid customerId, string shippingAddress, string billingAddress, string notes) : this()
     {
-        _orderItems = list;
-        _totalAmount = list.Sum(p => p._subtotal);
+        CustomerId = customerId;
+        ShippingAddress = shippingAddress;
+        BillingAddress = billingAddress;
+        Notes = notes;
+    }
+
+    public void SetOrderItems(List<OrderItem> items)
+    {
+        OrderItems = items;
+        TotalAmount = items.Sum(i => i.Subtotal);
     }
 
 }

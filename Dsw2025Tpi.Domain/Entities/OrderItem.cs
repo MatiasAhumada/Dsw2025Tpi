@@ -1,28 +1,29 @@
+using Dsw2025Tpi.Domain.Entities;
+using System;
 
-using Dsw2025Tpi.Domain.Entities;public class OrderItem : EntityBase
+public class OrderItem : EntityBase
 {
-    public Guid _orderId { get; set; }
-    public Order _order { get; set; } 
+    public Guid OrderId { get; set; }
+    public Order Order { get; set; }
 
-    public Guid _productId { get; set; }
-    public Product _product { get; set; } 
+    public Guid ProductId { get; set; }
+    public Product Product { get; set; }
 
-    public int _quantity { get; set; }
-    public decimal _unitPrice { get; set; }
+    public int Quantity { get; set; }
+    public decimal UnitPrice { get; set; }
 
-    public decimal _subtotal { get; set; } 
+    public decimal Subtotal { get; set; }
 
-    
     public OrderItem() { }
 
     public OrderItem(Guid orderId, Order order, Guid productId, Product product, int quantity, decimal unitPrice)
     {
-        _orderId = orderId;
-        _order = order;
-        _productId = productId;
-        _product = product;
-        _quantity = quantity;
-        _unitPrice = unitPrice;
-        _subtotal = quantity * unitPrice;
+        OrderId = orderId;
+        Order = order;
+        ProductId = productId;
+        Product = product;
+        Quantity = quantity;
+        UnitPrice = unitPrice;
+        Subtotal = quantity * unitPrice;
     }
 }

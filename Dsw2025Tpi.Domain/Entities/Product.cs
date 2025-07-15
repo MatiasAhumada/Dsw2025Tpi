@@ -1,9 +1,16 @@
 using System.Security.Cryptography.X509Certificates;
 namespace Dsw2025Tpi.Domain.Entities;
+
 using Dsw2025Tpi.Domain.Entities;
 
 public class Product : EntityBase
 {
+    public string Sku { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public decimal CurrentUnitPrice { get; set; }
+    public int StockQuantity { get; set; }
+    public bool IsActive { get; set; }
 
     public Product()
     {
@@ -24,11 +31,5 @@ public class Product : EntityBase
         StockQuantity = stock;
         IsActive = true;
     }
-    public string Sku { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public decimal CurrentUnitPrice { get; set; }
-    public int StockQuantity { get; set; }
-    public bool IsActive { get; set; }
 
 }

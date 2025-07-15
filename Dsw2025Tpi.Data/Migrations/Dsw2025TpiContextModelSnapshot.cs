@@ -22,6 +22,29 @@ namespace Dsw2025Tpi.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Customer", b =>
+                {
+                    b.Property<Guid>("InternalCode")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("InternalCode");
+
+                    b.ToTable("Customers");
+                });
+
             modelBuilder.Entity("Dsw2025Tpi.Domain.Entities.Product", b =>
                 {
                     b.Property<Guid>("InternalCode")
@@ -66,32 +89,37 @@ namespace Dsw2025Tpi.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("_billingAddress")
+                    b.Property<string>("BillingAddress")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("_customerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("_date")
+                    b.Property<Guid>("CustomerInternalCode")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("_notes")
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShippingAddress")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("_shippingAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("_status")
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("_totalAmount")
+                    b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("InternalCode");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("CustomerInternalCode");
 
                     b.ToTable("Orders");
                 });
@@ -102,63 +130,96 @@ namespace Dsw2025Tpi.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("_orderId")
+                    b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("_orderInternalCode")
+                    b.Property<Guid>("OrderInternalCode")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("_productId")
+                    b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("_quantity")
+                    b.Property<Guid>("ProductInternalCode")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("_subtotal")
+                    b.Property<decimal>("Subtotal")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("_unitPrice")
+                    b.Property<decimal>("UnitPrice")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("InternalCode");
 
-                    b.HasIndex("_orderId");
+                    b.HasIndex("OrderId");
 
-                    b.HasIndex("_orderInternalCode");
+                    b.HasIndex("OrderInternalCode");
 
-                    b.HasIndex("_productId");
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ProductInternalCode");
 
                     b.ToTable("OrderItems");
+                });
+
+            modelBuilder.Entity("Order", b =>
+                {
+                    b.HasOne("Customer", null)
+                        .WithMany("Orders")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerInternalCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("OrderItem", b =>
                 {
                     b.HasOne("Order", null)
-                        .WithMany("_orderItems")
-                        .HasForeignKey("_orderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Order", "_order")
+                    b.HasOne("Order", "Order")
                         .WithMany()
-                        .HasForeignKey("_orderInternalCode")
+                        .HasForeignKey("OrderInternalCode")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Dsw2025Tpi.Domain.Entities.Product", "_product")
+                    b.HasOne("Dsw2025Tpi.Domain.Entities.Product", null)
                         .WithMany()
-                        .HasForeignKey("_productId")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Dsw2025Tpi.Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductInternalCode")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("_order");
+                    b.Navigation("Order");
 
-                    b.Navigation("_product");
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Customer", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("Order", b =>
                 {
-                    b.Navigation("_orderItems");
+                    b.Navigation("OrderItems");
                 });
 #pragma warning restore 612, 618
         }
