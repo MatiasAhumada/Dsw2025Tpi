@@ -44,7 +44,7 @@ namespace Dsw2025Tpi.Data.Services
 
             var token = GenerateJwtToken(admin);
 
-            return new AdminAuthDto.LoginResponse(token, admin.DniHash);
+            return new AdminAuthDto.LoginResponse(token);
         }
 
         private string GenerateJwtToken(Admin admin)

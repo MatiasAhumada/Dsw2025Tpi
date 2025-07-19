@@ -17,12 +17,12 @@ public class Order : EntityBase
 
     public Order()
     {
-        Date = DateTime.UtcNow;
-        Status = OrderStatus.Pending;
     }
 
     public Order(Guid customerId, string shippingAddress, string billingAddress, string notes) : this()
     {
+        Date = DateTime.UtcNow;
+        Status = OrderStatus.Pending;
         CustomerId = customerId;
         ShippingAddress = shippingAddress;
         BillingAddress = billingAddress;

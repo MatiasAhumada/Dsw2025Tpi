@@ -22,6 +22,7 @@ namespace Dsw2025Tpi.Application.Dtos
             string BillingAddress,
             DateTime CreatedAt,
             decimal TotalAmount,
+            string Status,
             List<ResponseOrderItem> OrderItems
         );
 
@@ -34,6 +35,15 @@ namespace Dsw2025Tpi.Application.Dtos
             decimal Subtotal
         );
     }
-    public record UpdateOrderStatusRequest(string NewStatus);
+    public class UpdateOrderStatusRequest
+    {
+        public string NewStatus { get; set; }
+    }
+    public class UpdateOrderStatusResponse
+    {
+        public string NewStatus { get; set; }
+    }
+
+
 
 }

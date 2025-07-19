@@ -14,7 +14,7 @@ public class OrderService
         _repository = repository;
         _ctx = ctx;
     }
- public async Task<Order> CreateOrderAsync(CreateOrderRequest.RequestOrder request)
+    public async Task<Order> CreateOrderAsync(CreateOrderRequest.RequestOrder request)
     {
         var customer = await _ctx.Customers.FindAsync(request.CustomerId);
         if (customer == null)
@@ -28,7 +28,7 @@ public class OrderService
                 throw new InvalidOperationException($"Producto {item.ProductId} no existe.");
             if (product.StockQuantity < item.Quantity)
                 throw new InvalidOperationException($"Stock insuficiente para {product.Name}.");
-            
+
             product.StockQuantity -= item.Quantity;         // actualizar en memoria
             orderItems.Add(new OrderItem(
                 productId: product.InternalCode,
@@ -101,10 +101,24 @@ public class OrderService
 
         if (order.Status == newStatus)
             throw new InvalidOperationException("La orden ya tiene el estado solicitado.");
+        if (!IsValidTransition(order.Status, newStatus))
+            throw new InvalidOperationException($"No se puede pasar de {order.Status} a {newStatus}.");
 
         order.Status = newStatus;
 
         await _repository.Update(order);
+
+    }
+    private bool IsValidTransition(OrderStatus current, OrderStatus next)
+    {
+        return (current, next) switch
+        {
+            (OrderStatus.Pending, OrderStatus.Processing) => true,
+            (OrderStatus.Processing, OrderStatus.Shipped) => true,
+            (OrderStatus.Shipped, OrderStatus.Delivered) => true,
+            (_, OrderStatus.Cancelled) => true, // Se puede cancelar desde cualquier estado
+            _ => false
+        };
     }
 
 

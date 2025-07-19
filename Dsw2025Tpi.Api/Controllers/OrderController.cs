@@ -32,6 +32,7 @@ public class OrdersController : ControllerBase
                 BillingAddress: order.BillingAddress,
                 CreatedAt: order.Date,
                 TotalAmount: order.TotalAmount,
+                Status: order.Status.ToString(),
                 OrderItems: order.OrderItems.Select(item => new CreateOrderRequest.ResponseOrderItem(
                     ProductId: item.ProductId,
                     Name: item.Product.Name,
@@ -71,6 +72,7 @@ public class OrdersController : ControllerBase
        BillingAddress: order.BillingAddress,
        CreatedAt: order.Date,
        TotalAmount: order.TotalAmount,
+       Status: order.Status.ToString(),
        orderItems
    );
 
@@ -94,6 +96,7 @@ public class OrdersController : ControllerBase
                 BillingAddress: order.BillingAddress,
                 CreatedAt: order.Date,
                 TotalAmount: order.TotalAmount,
+                Status: order.Status.ToString(),
                 OrderItems: order.OrderItems.Select(item => new CreateOrderRequest.ResponseOrderItem(
                     ProductId: item.ProductId,
                     Name: item.Product.Name,
@@ -115,22 +118,33 @@ public class OrdersController : ControllerBase
     [HttpPut("{id}/status")]
     public async Task<IActionResult> UpdateOrderStatus(Guid id, [FromBody] UpdateOrderStatusRequest request)
     {
-        if (!Enum.TryParse<OrderStatus>(request.NewStatus, ignoreCase: true, out var newStatus))
-            return BadRequest(new { error = "Estado inválido." });
-
         try
         {
-            await _orderService.UpdateOrderStatusAsync(id, newStatus);
-            return NoContent(); 
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new { error = ex.Message });
+            if (!Enum.TryParse<OrderStatus>(request.NewStatus, true, out var parsedStatus))
+            {
+                return BadRequest(new { error = "Estado de orden inválido." });
+            }
+
+            await _orderService.UpdateOrderStatusAsync(id, parsedStatus);
+
+            return Ok(new UpdateOrderStatusResponse
+            {
+                NewStatus = parsedStatus.ToString()
+            });
         }
         catch (KeyNotFoundException)
         {
             return NotFound(new { error = "Orden no encontrada." });
         }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, new { error = "Error interno del servidor." });
+        }
     }
+
 
 }
