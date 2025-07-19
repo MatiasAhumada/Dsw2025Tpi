@@ -1,15 +1,9 @@
 using Dsw2025Tpi.Application.Dtos;
-using Dsw2025Tpi.Application.Exceptions;
-using Dsw2025Tpi.Application.Services;
-using Dsw2025Tpi.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
-
-
 namespace Dsw2025Tpi.Api.Controllers;
-
+[Authorize]
 [ApiController]
 [Route("api/orders")]
 public class OrdersController : ControllerBase

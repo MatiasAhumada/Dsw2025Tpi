@@ -1,0 +1,71 @@
+using Microsoft.AspNetCore.Mvc;
+using Dsw2025Tpi.Application.Dtos;
+using Dsw2025Tpi.Data.Services;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+
+namespace Dsw2025Tpi.Api.Controllers
+{
+    [ApiController]
+    [Route("api/auth")]
+    public class AuthController : ControllerBase
+    {
+        private readonly AuthService _authService;
+
+        public AuthController(AuthService authService)
+        {
+            _authService = authService;
+        }
+
+        /// <summary>
+        /// Registra un nuevo administrador.
+        /// </summary>
+        /// <param name="dto">Nombre y DNI</param>
+        /// <returns>Nombre y DNI hasheado</returns>
+        [HttpPost("register")]
+        [AllowAnonymous]
+        public async Task<ActionResult<AdminAuthDto.RegisterResponse>> Register([FromBody] AdminAuthDto.RegisterRequest dto)
+        {
+            try
+            {
+                var result = await _authService.RegisterAsync(dto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Inicia sesión y devuelve el token JWT.
+        /// </summary>
+        /// <param name="dto">Nombre y DNI</param>
+        /// <returns>Token JWT y hash del DNI</returns>
+        [HttpPost("login")]
+        [AllowAnonymous]
+        public async Task<ActionResult<AdminAuthDto.LoginResponse>> Login([FromBody] AdminAuthDto.LoginRequest dto)
+        {
+            try
+            {
+                var result = await _authService.LoginAsync(dto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized(new { error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Endpoint de prueba protegido por JWT.
+        /// </summary>
+        [HttpGet("protected")]
+        [Authorize]
+        public ActionResult<string> Protected()
+        {
+            var userName = User.Identity?.Name;
+            return Ok($"Hola {userName}, accediste a un endpoint protegido");
+        }
+    }
+}

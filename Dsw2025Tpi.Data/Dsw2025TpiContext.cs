@@ -10,7 +10,8 @@ public class Dsw2025TpiContext : DbContext
     public DbSet<Product> Products { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
-    public DbSet<Customer> Customers { get; set; } // Agregado
+    public DbSet<Customer> Customers { get; set; }
+    public DbSet<Admin> Admins { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -78,6 +79,13 @@ public class Dsw2025TpiContext : DbContext
               .HasForeignKey(oi => oi.ProductId)
               .OnDelete(DeleteBehavior.Restrict);
         });
+        modelBuilder.Entity<Admin>(entity =>
+    {
+        entity.HasKey(e => e.InternalCode);
+        entity.Property(e => e.Nombre).IsRequired().HasMaxLength(100);
+        entity.Property(e => e.DniHash).IsRequired();
+    });
+
 
         base.OnModelCreating(modelBuilder);
     }
