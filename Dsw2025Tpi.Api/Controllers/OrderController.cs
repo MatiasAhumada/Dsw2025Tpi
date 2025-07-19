@@ -27,7 +27,7 @@ public class OrdersController : ControllerBase
 
             var response = new CreateOrderRequest.ResponseOrder(
                 OrderId: order.InternalCode,
-                CustomerId: order.CustomerId.ToString(),  // sin _
+                CustomerId: order.CustomerId.ToString(), 
                 ShippingAddress: order.ShippingAddress,
                 BillingAddress: order.BillingAddress,
                 CreatedAt: order.Date,

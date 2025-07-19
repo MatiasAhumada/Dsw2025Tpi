@@ -17,11 +17,6 @@ namespace Dsw2025Tpi.Api.Controllers
             _authService = authService;
         }
 
-        /// <summary>
-        /// Registra un nuevo administrador.
-        /// </summary>
-        /// <param name="dto">Nombre y DNI</param>
-        /// <returns>Nombre y DNI hasheado</returns>
         [HttpPost("register")]
         [AllowAnonymous]
         public async Task<ActionResult<AdminAuthDto.RegisterResponse>> Register([FromBody] AdminAuthDto.RegisterRequest dto)
@@ -37,11 +32,6 @@ namespace Dsw2025Tpi.Api.Controllers
             }
         }
 
-        /// <summary>
-        /// Inicia sesión y devuelve el token JWT.
-        /// </summary>
-        /// <param name="dto">Nombre y DNI</param>
-        /// <returns>Token JWT y hash del DNI</returns>
         [HttpPost("login")]
         [AllowAnonymous]
         public async Task<ActionResult<AdminAuthDto.LoginResponse>> Login([FromBody] AdminAuthDto.LoginRequest dto)
@@ -57,9 +47,6 @@ namespace Dsw2025Tpi.Api.Controllers
             }
         }
 
-        /// <summary>
-        /// Endpoint de prueba protegido por JWT.
-        /// </summary>
         [HttpGet("protected")]
         [Authorize]
         public ActionResult<string> Protected()

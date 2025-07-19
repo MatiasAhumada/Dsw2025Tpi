@@ -42,8 +42,6 @@ public class EfRepository: IRepository
     {
         return await Include(_context.Set<T>(), include).FirstOrDefaultAsync(e => e.InternalCode == id);
     }
-
-    //NO usada pero posible uso si se desea remplazar la busqueda de id por sku (mas amigable para el usuario)
     public async Task<T?> GetBySku<T>(string sku, params string[] include) where T : Product
     {
         return await Include(_context.Set<T>(), include).FirstOrDefaultAsync(e => e.Sku == sku);

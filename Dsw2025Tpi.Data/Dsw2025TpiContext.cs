@@ -15,7 +15,6 @@ public class Dsw2025TpiContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Product
         modelBuilder.Entity<Product>(entity =>
         {
             entity.HasKey(e => e.InternalCode);
@@ -28,7 +27,6 @@ public class Dsw2025TpiContext : DbContext
             entity.HasIndex(p => p.Sku).IsUnique();
         });
 
-        // Customer
         modelBuilder.Entity<Customer>(entity =>
         {
             entity.HasKey(e => e.InternalCode);
@@ -36,8 +34,7 @@ public class Dsw2025TpiContext : DbContext
             entity.Property(e => e.Email).IsRequired();
             entity.Property(e => e.PhoneNumber).IsRequired();
         });
-
-        // Order
+        
         modelBuilder.Entity<Order>(entity =>
         {
             entity.HasKey(e => e.InternalCode);
@@ -68,7 +65,6 @@ public class Dsw2025TpiContext : DbContext
             entity.Property(e => e.UnitPrice).HasColumnType("decimal(18,2)");
             entity.Property(e => e.Subtotal).HasColumnType("decimal(18,2)");
 
-            // Relaciones
             entity.HasOne<Order>()
               .WithMany(o => o.OrderItems)
               .HasForeignKey(oi => oi.OrderId)

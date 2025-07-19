@@ -29,7 +29,7 @@ public class OrderService
             if (product.StockQuantity < item.Quantity)
                 throw new InvalidOperationException($"Stock insuficiente para {product.Name}.");
 
-            product.StockQuantity -= item.Quantity;         // actualizar en memoria
+            product.StockQuantity -= item.Quantity;
             orderItems.Add(new OrderItem(
                 productId: product.InternalCode,
                 product: product,
@@ -66,7 +66,6 @@ public class OrderService
 
     public async Task<IEnumerable<Order>> GetAllOrdersAsync(string? status, Guid? customerId, int pageNumber, int pageSize)
     {
-        // Filtro base
         Expression<Func<Order, bool>> filter = o => true;
 
         if (!string.IsNullOrWhiteSpace(status) && Enum.TryParse<OrderStatus>(status, true, out var parsedStatus))
@@ -116,7 +115,7 @@ public class OrderService
             (OrderStatus.Pending, OrderStatus.Processing) => true,
             (OrderStatus.Processing, OrderStatus.Shipped) => true,
             (OrderStatus.Shipped, OrderStatus.Delivered) => true,
-            (_, OrderStatus.Cancelled) => true, // Se puede cancelar desde cualquier estado
+            (_, OrderStatus.Cancelled) => true,
             _ => false
         };
     }
