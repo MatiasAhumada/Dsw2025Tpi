@@ -46,13 +46,5 @@ namespace Dsw2025Tpi.Api.Controllers
                 return Unauthorized(new { error = ex.Message });
             }
         }
-
-        [HttpGet("protected")]
-        [Authorize]
-        public ActionResult<string> Protected()
-        {
-            var userName = User.Identity?.Name;
-            return Ok($"Hola {userName}, accediste a un endpoint protegido");
-        }
     }
 }

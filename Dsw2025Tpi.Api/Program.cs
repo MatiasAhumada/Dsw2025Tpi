@@ -70,9 +70,9 @@ public class Program
             c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
 
             c.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
-                { jwtSecurityScheme, Array.Empty<string>() }
-            });
+             {
+                 { jwtSecurityScheme, Array.Empty<string>() }
+             });
         });
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
