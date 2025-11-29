@@ -1,0 +1,36 @@
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      SA_PASSWORD: "P@ssword123"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+    networks:
+      - dsw-network
+
+  api:
+    build:
+      context: .                
+      dockerfile: ./Dsw2025Tpi.Api/Dockerfile
+    container_name: dsw-api
+    ports:
+      - "5001:8080"
+    depends_on:
+      - db
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://0.0.0.0:8080"
+      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=DswDb;User Id=sa;Password=P@ssword123;TrustServerCertificate=True;"
+    networks:
+      - dsw-network
+
+volumes:
+  sql_data:
+
+networks:
+  dsw-network:
+    driver: bridge

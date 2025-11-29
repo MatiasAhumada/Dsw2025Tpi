@@ -26,7 +26,7 @@ public class OrdersController : ControllerBase
             var order = await _orderService.CreateOrderAsync(request);
 
             var response = new CreateOrderRequest.ResponseOrder(
-                OrderId: order.InternalCode,
+                OrderId: order.GuidCode,
                 CustomerId: order.CustomerId.ToString(), 
                 ShippingAddress: order.ShippingAddress,
                 BillingAddress: order.BillingAddress,
@@ -43,7 +43,7 @@ public class OrdersController : ControllerBase
                 )).ToList()
             );
 
-            return CreatedAtAction(nameof(GetOrderById), new { id = order.InternalCode }, response);
+            return CreatedAtAction(nameof(GetOrderById), new { id = order.GuidCode }, response);
         }
         catch (InvalidOperationException ex)
         {
@@ -66,7 +66,7 @@ public class OrdersController : ControllerBase
                    Subtotal: item.Subtotal
                )).ToList();
         var response = new CreateOrderRequest.ResponseOrder(
-       OrderId: order.InternalCode,
+       OrderId: order.GuidCode,
        CustomerId: order.CustomerId.ToString(),
        ShippingAddress: order.ShippingAddress,
        BillingAddress: order.BillingAddress,
@@ -90,7 +90,7 @@ public class OrdersController : ControllerBase
             var orders = await _orderService.GetAllOrdersAsync(status, customerId, pageNumber, pageSize);
 
             var response = orders.Select(order => new CreateOrderRequest.ResponseOrder(
-                OrderId: order.InternalCode,
+                OrderId: order.GuidCode,
                 CustomerId: order.CustomerId.ToString(),
                 ShippingAddress: order.ShippingAddress,
                 BillingAddress: order.BillingAddress,

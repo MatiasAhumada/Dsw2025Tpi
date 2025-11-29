@@ -31,7 +31,7 @@ public class OrderService
 
             product.StockQuantity -= item.Quantity;
             orderItems.Add(new OrderItem(
-                productId: product.InternalCode,
+                productId: product.GuidCode,
                 product: product,
                 quantity: item.Quantity,
                 unitPrice: product.CurrentUnitPrice

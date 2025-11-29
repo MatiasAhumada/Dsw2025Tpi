@@ -27,13 +27,13 @@ public class CustomersController : ControllerBase
             var customer = await _customerService.CreateCustomerAsync(request);
 
             var response = new CustomerResponse(
-                InternalCode: customer.InternalCode,
+                GuidCode: customer.GuidCode,
                 Email: customer.Email,
                 Name: customer.Name,
                 PhoneNumber: customer.PhoneNumber
             );
 
-            return CreatedAtAction(nameof(GetCustomerById), new { id = customer.InternalCode }, response);
+            return CreatedAtAction(nameof(GetCustomerById), new { id = customer.GuidCode }, response);
         }
         catch (ArgumentException ex)
         {
@@ -47,7 +47,7 @@ public class CustomersController : ControllerBase
         var customers = await _customerService.GetAllCustomersAsync();
 
         var response = customers.Select(c => new CustomerResponse(
-            InternalCode: c.InternalCode,
+            GuidCode: c.GuidCode,
             Email: c.Email,
             Name: c.Name,
             PhoneNumber: c.PhoneNumber
@@ -65,7 +65,7 @@ public class CustomersController : ControllerBase
             return NotFound(new { error = "Cliente no encontrado" });
 
         var response = new CustomerResponse(
-            InternalCode: customer.InternalCode,
+            GuidCode: customer.GuidCode,
             Email: customer.Email,
             Name: customer.Name,
             PhoneNumber: customer.PhoneNumber

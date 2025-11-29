@@ -12,25 +12,39 @@ namespace Dsw2025Tpi.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Admins",
+                columns: table => new
+                {
+                    GuidCode = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Nombre = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    DniHash = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Admins", x => x.GuidCode);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Customers",
                 columns: table => new
                 {
-                    InternalCode = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GuidCode = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Customers", x => x.InternalCode);
+                    table.PrimaryKey("PK_Customers", x => x.GuidCode);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
-                    InternalCode = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GuidCode = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Sku = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    InternalCode = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     CurrentUnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -39,14 +53,14 @@ namespace Dsw2025Tpi.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Products", x => x.InternalCode);
+                    table.PrimaryKey("PK_Products", x => x.GuidCode);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
                 {
-                    InternalCode = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GuidCode = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ShippingAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -57,12 +71,12 @@ namespace Dsw2025Tpi.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Orders", x => x.InternalCode);
+                    table.PrimaryKey("PK_Orders", x => x.GuidCode);
                     table.ForeignKey(
                         name: "FK_Orders_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
-                        principalColumn: "InternalCode",
+                        principalColumn: "GuidCode",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -70,43 +84,48 @@ namespace Dsw2025Tpi.Data.Migrations
                 name: "OrderItems",
                 columns: table => new
                 {
-                    InternalCode = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GuidCode = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OrderInternalCode = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OrderGuidCode = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProductInternalCode = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductGuidCode = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Subtotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderItems", x => x.InternalCode);
+                    table.PrimaryKey("PK_OrderItems", x => x.GuidCode);
+                    table.ForeignKey(
+                        name: "FK_OrderItems_Orders_OrderGuidCode",
+                        column: x => x.OrderGuidCode,
+                        principalTable: "Orders",
+                        principalColumn: "GuidCode",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_OrderItems_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
-                        principalColumn: "InternalCode",
+                        principalColumn: "GuidCode",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_OrderItems_Orders_OrderInternalCode",
-                        column: x => x.OrderInternalCode,
-                        principalTable: "Orders",
-                        principalColumn: "InternalCode",
+                        name: "FK_OrderItems_Products_ProductGuidCode",
+                        column: x => x.ProductGuidCode,
+                        principalTable: "Products",
+                        principalColumn: "GuidCode",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_OrderItems_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
-                        principalColumn: "InternalCode",
+                        principalColumn: "GuidCode",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_OrderItems_Products_ProductInternalCode",
-                        column: x => x.ProductInternalCode,
-                        principalTable: "Products",
-                        principalColumn: "InternalCode",
-                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderItems_OrderGuidCode",
+                table: "OrderItems",
+                column: "OrderGuidCode");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderItems_OrderId",
@@ -114,19 +133,14 @@ namespace Dsw2025Tpi.Data.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderItems_OrderInternalCode",
+                name: "IX_OrderItems_ProductGuidCode",
                 table: "OrderItems",
-                column: "OrderInternalCode");
+                column: "ProductGuidCode");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderItems_ProductId",
                 table: "OrderItems",
                 column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OrderItems_ProductInternalCode",
-                table: "OrderItems",
-                column: "ProductInternalCode");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_CustomerId",
@@ -143,6 +157,9 @@ namespace Dsw2025Tpi.Data.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Admins");
+
             migrationBuilder.DropTable(
                 name: "OrderItems");
 

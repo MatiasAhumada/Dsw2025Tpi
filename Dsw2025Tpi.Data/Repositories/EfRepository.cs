@@ -40,7 +40,7 @@ public class EfRepository: IRepository
 
     public async Task<T?> GetById<T>(Guid id, params string[] include) where T : EntityBase
     {
-        return await Include(_context.Set<T>(), include).FirstOrDefaultAsync(e => e.InternalCode == id);
+        return await Include(_context.Set<T>(), include).FirstOrDefaultAsync(e => e.GuidCode == id);
     }
     public async Task<T?> GetBySku<T>(string sku, params string[] include) where T : Product
     {
