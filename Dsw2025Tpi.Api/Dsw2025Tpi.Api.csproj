@@ -29,4 +29,10 @@
     <!-- <ProjectReference Include="..\Dsw2025Tpi.Data\Dsw2025Tpi.Data.csproj" /> -->
   </ItemGroup>
 
+    <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

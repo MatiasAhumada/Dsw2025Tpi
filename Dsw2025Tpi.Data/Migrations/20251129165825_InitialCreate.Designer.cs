@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dsw2025Tpi.Data.Migrations
 {
     [DbContext(typeof(Dsw2025TpiContext))]
-    [Migration("20250715024448_InitialCreate")]
+    [Migration("20251129165825_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -25,9 +25,29 @@ namespace Dsw2025Tpi.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Admin", b =>
+                {
+                    b.Property<Guid>("GuidCode")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DniHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("GuidCode");
+
+                    b.ToTable("Admins");
+                });
+
             modelBuilder.Entity("Customer", b =>
                 {
-                    b.Property<Guid>("InternalCode")
+                    b.Property<Guid>("GuidCode")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -43,14 +63,14 @@ namespace Dsw2025Tpi.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("InternalCode");
+                    b.HasKey("GuidCode");
 
                     b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("Dsw2025Tpi.Domain.Entities.Product", b =>
                 {
-                    b.Property<Guid>("InternalCode")
+                    b.Property<Guid>("GuidCode")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -61,6 +81,11 @@ namespace Dsw2025Tpi.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("InternalCode")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -78,7 +103,7 @@ namespace Dsw2025Tpi.Data.Migrations
                     b.Property<int>("StockQuantity")
                         .HasColumnType("int");
 
-                    b.HasKey("InternalCode");
+                    b.HasKey("GuidCode");
 
                     b.HasIndex("Sku")
                         .IsUnique();
@@ -88,7 +113,7 @@ namespace Dsw2025Tpi.Data.Migrations
 
             modelBuilder.Entity("Order", b =>
                 {
-                    b.Property<Guid>("InternalCode")
+                    b.Property<Guid>("GuidCode")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -115,7 +140,7 @@ namespace Dsw2025Tpi.Data.Migrations
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("InternalCode");
+                    b.HasKey("GuidCode");
 
                     b.HasIndex("CustomerId");
 
@@ -124,20 +149,20 @@ namespace Dsw2025Tpi.Data.Migrations
 
             modelBuilder.Entity("OrderItem", b =>
                 {
-                    b.Property<Guid>("InternalCode")
+                    b.Property<Guid>("GuidCode")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("OrderGuidCode")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("OrderInternalCode")
+                    b.Property<Guid>("ProductGuidCode")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductInternalCode")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
@@ -149,15 +174,15 @@ namespace Dsw2025Tpi.Data.Migrations
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("InternalCode");
+                    b.HasKey("GuidCode");
+
+                    b.HasIndex("OrderGuidCode");
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("OrderInternalCode");
+                    b.HasIndex("ProductGuidCode");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("ProductInternalCode");
 
                     b.ToTable("OrderItems");
                 });
@@ -175,15 +200,21 @@ namespace Dsw2025Tpi.Data.Migrations
 
             modelBuilder.Entity("OrderItem", b =>
                 {
+                    b.HasOne("Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderGuidCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Order", null)
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Order", "Order")
+                    b.HasOne("Dsw2025Tpi.Domain.Entities.Product", "Product")
                         .WithMany()
-                        .HasForeignKey("OrderInternalCode")
+                        .HasForeignKey("ProductGuidCode")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -191,12 +222,6 @@ namespace Dsw2025Tpi.Data.Migrations
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Dsw2025Tpi.Domain.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductInternalCode")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Order");

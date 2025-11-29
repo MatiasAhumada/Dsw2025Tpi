@@ -24,7 +24,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
       ASPNETCORE_URLS: "http://0.0.0.0:8080"
-      ConnectionStrings__DefaultConnection: "Server=db;Database=DswDb;User Id=sa;Password=P@ssword123;TrustServerCertificate=True;"
+      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=DswDb;User Id=sa;Password=P@ssword123;TrustServerCertificate=True;"
     networks:
       - dsw-network
 

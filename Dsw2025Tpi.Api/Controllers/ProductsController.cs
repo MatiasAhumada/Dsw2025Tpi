@@ -40,7 +40,7 @@ public class ProductsController : ControllerBase
         try
         {
             var product = await _service.AddProduct(request);
-            return CreatedAtAction(nameof(GetProductById), new { id = product.InternalCode }, product);
+            return CreatedAtAction(nameof(GetProductById), new { id = product.GuidCode }, product);
         }
         catch (ArgumentException ae)
         {
@@ -84,7 +84,7 @@ public class ProductsController : ControllerBase
         {
             return BadRequest("El precio ingresado no es valido");
         }
-        if (existingProduct != null && existingProduct.InternalCode != id)
+        if (existingProduct != null && existingProduct.GuidCode != id)
         {
             return Conflict("Ya existe un producto con el mismo SKU.");
         }

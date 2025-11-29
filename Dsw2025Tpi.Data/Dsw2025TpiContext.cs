@@ -17,8 +17,9 @@ public class Dsw2025TpiContext : DbContext
     {
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.InternalCode);
+            entity.HasKey(e => e.GuidCode);
             entity.Property(e => e.Sku).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.InternalCode).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Description).HasMaxLength(500).IsRequired();
             entity.Property(e => e.CurrentUnitPrice).IsRequired().HasColumnType("decimal(18,2)");
@@ -29,7 +30,7 @@ public class Dsw2025TpiContext : DbContext
 
         modelBuilder.Entity<Customer>(entity =>
         {
-            entity.HasKey(e => e.InternalCode);
+            entity.HasKey(e => e.GuidCode);
             entity.Property(e => e.Name).IsRequired();
             entity.Property(e => e.Email).IsRequired();
             entity.Property(e => e.PhoneNumber).IsRequired();
@@ -37,7 +38,7 @@ public class Dsw2025TpiContext : DbContext
         
         modelBuilder.Entity<Order>(entity =>
         {
-            entity.HasKey(e => e.InternalCode);
+            entity.HasKey(e => e.GuidCode);
             entity.Property(e => e.CustomerId).IsRequired();
             entity.Property(e => e.ShippingAddress).IsRequired();
             entity.Property(e => e.BillingAddress).IsRequired();
@@ -58,7 +59,7 @@ public class Dsw2025TpiContext : DbContext
 
         modelBuilder.Entity<OrderItem>(entity =>
         {
-            entity.HasKey(e => e.InternalCode);
+            entity.HasKey(e => e.GuidCode);
             entity.Property(e => e.OrderId).IsRequired();
             entity.Property(e => e.ProductId).IsRequired();
             entity.Property(e => e.Quantity).IsRequired();
@@ -77,7 +78,7 @@ public class Dsw2025TpiContext : DbContext
         });
         modelBuilder.Entity<Admin>(entity =>
     {
-        entity.HasKey(e => e.InternalCode);
+        entity.HasKey(e => e.GuidCode);
         entity.Property(e => e.Nombre).IsRequired().HasMaxLength(100);
         entity.Property(e => e.DniHash).IsRequired();
     });
