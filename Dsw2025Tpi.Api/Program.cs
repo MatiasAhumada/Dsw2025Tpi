@@ -16,7 +16,7 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         var jwtSettings = builder.Configuration.GetSection("jwt");
-        var Key = jwtSettings["Key"]; 
+        var Key = jwtSettings["Key"];
 
         builder.Services.AddAuthentication(options =>
         {
@@ -85,6 +85,15 @@ public class Program
         builder.Services.AddTransient<OrderService>();
         builder.Services.AddTransient<CustomerService>();
         builder.Services.AddTransient<AuthService>();
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAll",
+                builder => builder
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+            );
+        });
 
         var app = builder.Build();
 
@@ -96,7 +105,7 @@ public class Program
         }
 
         app.UseHttpsRedirection();
-
+        app.UseCors("AllowAll");
         app.UseAuthentication();
         app.UseAuthorization();
 

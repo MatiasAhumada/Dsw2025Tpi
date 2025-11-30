@@ -46,5 +46,20 @@ namespace Dsw2025Tpi.Api.Controllers
                 return Unauthorized(new { error = ex.Message });
             }
         }
+
+        [HttpPost("login/customer")]
+        [AllowAnonymous]
+        public async Task<ActionResult<AdminAuthDto.LoginResponse>> LoginCustomer([FromBody] CustomerLoginRequest dto)
+        {
+            try
+            {
+                var result = await _authService.LoginCustomerAsync(dto.Email, dto.Dni);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized(new { error = ex.Message });
+            }
+        }
     }
 }

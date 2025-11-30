@@ -16,6 +16,33 @@ public class CustomersController : ControllerBase
         _customerService = customerService;
     }
 
+    [HttpPost("register")]
+    [AllowAnonymous]
+    public async Task<IActionResult> RegisterCustomer([FromBody] CreateCustomerRequest request)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            var customer = await _customerService.CreateCustomerAsync(request);
+
+            var response = new CustomerResponse(
+                GuidCode: customer.GuidCode,
+                Email: customer.Email,
+                Name: customer.Name,
+                PhoneNumber: customer.PhoneNumber,
+                Dni: customer.Dni
+            );
+
+            return Ok(response);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateCustomer([FromBody] CreateCustomerRequest request)
     {
@@ -30,7 +57,8 @@ public class CustomersController : ControllerBase
                 GuidCode: customer.GuidCode,
                 Email: customer.Email,
                 Name: customer.Name,
-                PhoneNumber: customer.PhoneNumber
+                PhoneNumber: customer.PhoneNumber,
+                Dni: customer.Dni
             );
 
             return CreatedAtAction(nameof(GetCustomerById), new { id = customer.GuidCode }, response);
@@ -50,7 +78,8 @@ public class CustomersController : ControllerBase
             GuidCode: c.GuidCode,
             Email: c.Email,
             Name: c.Name,
-            PhoneNumber: c.PhoneNumber
+            PhoneNumber: c.PhoneNumber,
+            Dni: c.Dni
         ));
 
         return Ok(response);
@@ -68,7 +97,8 @@ public class CustomersController : ControllerBase
             GuidCode: customer.GuidCode,
             Email: customer.Email,
             Name: customer.Name,
-            PhoneNumber: customer.PhoneNumber
+            PhoneNumber: customer.PhoneNumber,
+            Dni: customer.Dni
         );
 
         return Ok(response);

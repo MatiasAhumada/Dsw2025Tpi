@@ -29,7 +29,7 @@ namespace Dsw2025Tpi.Data.Services
 
             var DniHash = BCrypt.Net.BCrypt.HashPassword(dto.Dni);
 
-            var admin = new Admin(dto.Nombre, DniHash);
+            var admin = new Admin(dto.Nombre, DniHash, dto.Email);
 
             var adminGuardado = await _repository.Add(admin);
 
@@ -47,6 +47,8 @@ namespace Dsw2025Tpi.Data.Services
             return new AdminAuthDto.LoginResponse(token);
         }
 
+
+
         private string GenerateJwtToken(Admin admin)
         {
             var key = Encoding.ASCII.GetBytes(_configuration["jwt:Key"]);
@@ -59,6 +61,43 @@ namespace Dsw2025Tpi.Data.Services
                 {
                     new Claim(ClaimTypes.NameIdentifier, admin.GuidCode.ToString()),
                     new Claim(ClaimTypes.Name, admin.Nombre)
+                }),
+                Expires = DateTime.UtcNow.AddMinutes(int.Parse(_configuration["jwt:ExpiryMinutes"])),
+                Issuer = _configuration["jwt:Issuer"],
+                Audience = _configuration["jwt:Audience"],
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return tokenHandler.WriteToken(token);
+        }
+
+        public async Task<AdminAuthDto.LoginResponse> LoginCustomerAsync(string email, string dni)
+        {
+            var customer = await _repository.First<Customer>(c => c.Email == email);
+            if (customer == null || customer.Dni != dni)
+                throw new Exception("Credenciales inválidas");
+
+            var token = GenerateJwtTokenForCustomer(customer);
+
+            return new AdminAuthDto.LoginResponse(token);
+        }
+
+        private string GenerateJwtTokenForCustomer(Customer customer)
+        {
+            var key = Encoding.ASCII.GetBytes(_configuration["jwt:Key"]);
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, customer.GuidCode.ToString()),
+                    new Claim(ClaimTypes.Name, customer.Name),
+                    new Claim(ClaimTypes.Email, customer.Email),
+                    new Claim("UserType", "Customer")
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(int.Parse(_configuration["jwt:ExpiryMinutes"])),
                 Issuer = _configuration["jwt:Issuer"],

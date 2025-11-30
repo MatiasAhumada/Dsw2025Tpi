@@ -21,6 +21,7 @@ public class ProductsController : ControllerBase
 
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetProducts()
     {
         var products = await _service.GetProducts();
@@ -58,6 +59,7 @@ public class ProductsController : ControllerBase
 
     [HttpGet]
     [Route("{id}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetProductById(Guid id)
     {
         var producto = await _service.GetProductById(id);
