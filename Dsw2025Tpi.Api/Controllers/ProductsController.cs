@@ -1,6 +1,7 @@
 using Dsw2025Tpi.Application.Dtos;
 using Dsw2025Tpi.Application.Exceptions;
 using Dsw2025Tpi.Application.Services;
+using Dsw2025Tpi.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,23 +19,25 @@ public class ProductsController : ControllerBase
         _service = service;
     }
 
-
-
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetProducts()
     {
         var products = await _service.GetProducts();
-        if (products == null || !products.Any())
-        {
-            return NoContent();
-        }
-        return Ok(products);
+        var activeProducts = products?.Where(p => p.IsActive).ToList() ?? new List<Product>();
+        return Ok(activeProducts);
     }
 
-
+    [HttpGet]
+    [Route("all")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetAllProducts()
+    {
+        var products = await _service.GetProducts();
+        return Ok(products ?? new List<Product>());
+    }
 
     [HttpPost]
-
     public async Task<IActionResult> PostProducts([FromBody] ModeloProducto.Request request)
     {
         try
@@ -58,6 +61,7 @@ public class ProductsController : ControllerBase
 
     [HttpGet]
     [Route("{id}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetProductById(Guid id)
     {
         var producto = await _service.GetProductById(id);
@@ -89,7 +93,6 @@ public class ProductsController : ControllerBase
             return Conflict("Ya existe un producto con el mismo SKU.");
         }
 
-
         products.Sku = request.Sku;
         products.Name = request.Name;
         products.Description = request.Description;
@@ -102,24 +105,16 @@ public class ProductsController : ControllerBase
 
     [HttpPatch]
     [Route("{id}")]
-    public async Task<IActionResult> DisableProduct(Guid id)
+    public async Task<IActionResult> ToggleProductStatus(Guid id)
     {
-        
         var producto = await _service.GetProductById(id);
         if (producto == null)
         {
             return NotFound("No se encontró el producto.");
         }
-        if (producto.IsActive == false)
-        {
-            return BadRequest("El producto ya está deshabilitado.");
-        }
 
-        producto.IsActive = false;
+        producto.IsActive = !producto.IsActive;
         await _service.Update(producto);
         return NoContent();
     }
-
 }
-        
-    
