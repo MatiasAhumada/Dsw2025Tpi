@@ -11,10 +11,19 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const userType = localStorage.getItem("userType");
+    
     if (!token) {
       navigate("/login");
       return;
     }
+    
+    if (userType !== "Admin") {
+      localStorage.clear();
+      navigate("/login");
+      return;
+    }
+    
     fetchStats();
   }, []);
 

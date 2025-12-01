@@ -19,8 +19,6 @@ public class ProductsController : ControllerBase
         _service = service;
     }
 
-
-
     [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> GetProducts()
@@ -39,10 +37,7 @@ public class ProductsController : ControllerBase
         return Ok(products ?? new List<Product>());
     }
 
-
-
     [HttpPost]
-
     public async Task<IActionResult> PostProducts([FromBody] ModeloProducto.Request request)
     {
         try
@@ -98,7 +93,6 @@ public class ProductsController : ControllerBase
             return Conflict("Ya existe un producto con el mismo SKU.");
         }
 
-
         products.Sku = request.Sku;
         products.Name = request.Name;
         products.Description = request.Description;
@@ -113,7 +107,6 @@ public class ProductsController : ControllerBase
     [Route("{id}")]
     public async Task<IActionResult> ToggleProductStatus(Guid id)
     {
-        
         var producto = await _service.GetProductById(id);
         if (producto == null)
         {
@@ -124,7 +117,4 @@ public class ProductsController : ControllerBase
         await _service.Update(producto);
         return NoContent();
     }
-
 }
-        
-    

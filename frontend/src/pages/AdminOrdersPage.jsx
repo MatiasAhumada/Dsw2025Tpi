@@ -9,10 +9,14 @@ export default function AdminOrdersPage() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
+    const userType = localStorage.getItem("userType");
+    
+    if (!token || userType !== "Admin") {
+      localStorage.clear();
       navigate("/login");
       return;
     }
+    
     fetchOrders();
   }, []);
 

@@ -14,10 +14,14 @@ export default function AdminProductsPage() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
+    const userType = localStorage.getItem("userType");
+    
+    if (!token || userType !== "Admin") {
+      localStorage.clear();
       navigate("/login");
       return;
     }
+    
     fetchProducts();
   }, []);
 
@@ -25,7 +29,6 @@ export default function AdminProductsPage() {
     try {
       const token = localStorage.getItem('token');
       
-      // Verificar que el token sea de Admin
       if (token) {
         try {
           const payload = JSON.parse(atob(token.split('.')[1]));

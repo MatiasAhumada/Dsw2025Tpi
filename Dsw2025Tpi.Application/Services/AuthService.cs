@@ -47,8 +47,6 @@ namespace Dsw2025Tpi.Data.Services
             return new AdminAuthDto.LoginResponse(token);
         }
 
-
-
         private string GenerateJwtToken(Admin admin)
         {
             var key = Encoding.ASCII.GetBytes(_configuration["jwt:Key"]);

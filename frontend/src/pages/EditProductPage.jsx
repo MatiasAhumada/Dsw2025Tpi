@@ -19,10 +19,14 @@ export default function EditProductPage() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
+    const userType = localStorage.getItem("userType");
+    
+    if (!token || userType !== "Admin") {
+      localStorage.clear();
       navigate("/login");
       return;
     }
+    
     fetchProduct();
   }, [id]);
 

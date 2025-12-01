@@ -8,7 +8,7 @@ export default function AdminLoginPage() {
   const [usuario, setUsuario] = useState("");
   const [contraseña, setContraseña] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
-  const [loading, setLoading] = useState(false); // Cree este estado porque el mensaje de error se muestra menos de un segundo.
+  const [loading, setLoading] = useState(false); // Estado creado por error visual, al hacer click en el botón de login y si el usuario era incorrecto, no se leia el mensaje de error.
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {

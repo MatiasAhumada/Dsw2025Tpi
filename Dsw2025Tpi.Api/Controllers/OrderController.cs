@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace Dsw2025Tpi.Api.Controllers;
+
 [ApiController]
 [Route("api/orders")]
 public class OrdersController : ControllerBase
@@ -51,6 +52,7 @@ public class OrdersController : ControllerBase
             return BadRequest(new { error = ex.Message });
         }
     }
+
     [HttpGet("{id}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetOrderById(Guid id)
@@ -59,6 +61,7 @@ public class OrdersController : ControllerBase
 
         if (order == null)
             return NotFound(new { error = "Orden no encontrada" });
+            
         var orderItems = order.OrderItems.Select(item => new CreateOrderRequest.ResponseOrderItem(
                    ProductId: item.ProductId,
                    Name: item.Product.Name,
@@ -67,26 +70,28 @@ public class OrdersController : ControllerBase
                    Quantity: item.Quantity,
                    Subtotal: item.Subtotal
                )).ToList();
+               
         var response = new CreateOrderRequest.ResponseOrder(
-       OrderId: order.GuidCode,
-       CustomerId: order.CustomerId.ToString(),
-       ShippingAddress: order.ShippingAddress,
-       BillingAddress: order.BillingAddress,
-       CreatedAt: order.Date,
-       TotalAmount: order.TotalAmount,
-       Status: order.Status.ToString(),
-       orderItems
-   );
+            OrderId: order.GuidCode,
+            CustomerId: order.CustomerId.ToString(),
+            ShippingAddress: order.ShippingAddress,
+            BillingAddress: order.BillingAddress,
+            CreatedAt: order.Date,
+            TotalAmount: order.TotalAmount,
+            Status: order.Status.ToString(),
+            orderItems
+        );
 
         return Ok(response);
     }
+
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> GetAllOrders(
-    [FromQuery] string? status,
-    [FromQuery] Guid? customerId,
-    [FromQuery] int pageNumber = 1,
-    [FromQuery] int pageSize = 10)
+        [FromQuery] string? status,
+        [FromQuery] Guid? customerId,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10)
     {
         try
         {
@@ -149,6 +154,4 @@ public class OrdersController : ControllerBase
             return StatusCode(500, new { error = "Error interno del servidor." });
         }
     }
-
-
 }

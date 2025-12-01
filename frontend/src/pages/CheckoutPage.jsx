@@ -31,9 +31,48 @@ export default function CheckoutPage() {
     return cart.reduce((total, item) => total + (item.currentUnitPrice * item.quantity), 0);
   };
 
+  const validateCartProducts = async () => {
+    try {
+      const response = await fetch("http://localhost:5142/api/products");
+      if (!response.ok) return false;
+      
+      const activeProducts = await response.json();
+      const updatedCart = [];
+      let hasChanges = false;
+      
+      for (const cartItem of cart) {
+        const currentProduct = activeProducts.find(p => p.guidCode === cartItem.guidCode);
+        
+        if (!currentProduct || !currentProduct.isActive) {
+          alert(`El producto "${cartItem.name}" ya no está disponible. No se puede completar la compra.`);
+          return false;
+        }
+        
+        if (currentProduct.stockQuantity < cartItem.quantity) {
+          alert(`El producto "${cartItem.name}" solo tiene ${currentProduct.stockQuantity} unidades disponibles. No se puede completar la compra de ${cartItem.quantity} unidades.`);
+          return false;
+        }
+        
+        updatedCart.push(cartItem);
+      }
+      
+      return true;
+    } catch (error) {
+      console.error("Error validando productos:", error);
+      alert("Error al validar productos. Intenta nuevamente.");
+      return false;
+    }
+  };
+
   const handleCheckout = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    const isValid = await validateCartProducts();
+    if (!isValid) {
+      setLoading(false);
+      return;
+    }
 
     try {
       const orderRequest = {
