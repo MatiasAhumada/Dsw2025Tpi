@@ -1,44 +1,64 @@
 import React, { useState, useEffect } from "react";
 import "./Auth.css";
+import "./PublicProductsPage.css";
 
 export default function PublicProductsPage() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
+  const [customer, setCustomer] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage] = useState(12);
 
   useEffect(() => {
     fetchProducts();
-    // Cargar carrito del localStorage
     const savedCart = localStorage.getItem("cart");
     if (savedCart) {
       setCart(JSON.parse(savedCart));
+    }
+    const userData = localStorage.getItem("userData");
+    if (userData) {
+      setCustomer(JSON.parse(userData));
     }
   }, []);
 
   const fetchProducts = async () => {
     try {
       const response = await fetch("http://localhost:5142/api/products");
-      const data = await response.json();
-      setProducts(data);
+      
+      if (response.ok) {
+        const data = await response.json();
+        setProducts(Array.isArray(data) ? data : []);
+      } else {
+        console.error("Error en la respuesta:", response.status);
+        setProducts([]);
+      }
     } catch (error) {
       console.error("Error al cargar productos:", error);
+      setProducts([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const addToCart = (product) => {
+  const addToCart = (product, quantity = 1) => {
+    if (quantity < 1) {
+      alert("La cantidad mínima es 1");
+      return;
+    }
+    
     const existingItem = cart.find(item => item.guidCode === product.guidCode);
     let newCart;
     
     if (existingItem) {
       newCart = cart.map(item =>
         item.guidCode === product.guidCode
-          ? { ...item, quantity: item.quantity + 1 }
+          ? { ...item, quantity: item.quantity + quantity }
           : item
       );
     } else {
-      newCart = [...cart, { ...product, quantity: 1 }];
+      newCart = [...cart, { ...product, quantity }];
     }
     
     setCart(newCart);
@@ -67,7 +87,7 @@ export default function PublicProductsPage() {
   };
 
   const getTotalPrice = () => {
-    return cart.reduce((total, item) => total + (item.unitPrice * item.quantity), 0);
+    return cart.reduce((total, item) => total + (item.currentUnitPrice * item.quantity), 0);
   };
 
   const handleCheckout = () => {
@@ -75,81 +95,160 @@ export default function PublicProductsPage() {
       alert("El carrito está vacío");
       return;
     }
-    // Redirigir al login de customer para comprar
-    window.location.href = "/customer-login";
+    
+    if (customer) {
+      window.location.href = "/checkout";
+    } else {
+      window.location.href = "/customer-login";
+    }
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userData");
+    setCustomer(null);
+  };
+
+  const filteredProducts = products.filter(product =>
+    product.name.toLowerCase().includes(search.toLowerCase()) ||
+    product.sku.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   if (loading) {
     return <div className="auth-container"><div className="auth-card"><h2>Cargando productos...</h2></div></div>;
   }
 
   return (
-    <div style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "30px" }}>
+    <div className="public-container">
+      <div className="public-header">
         <h1>🛍️ Tienda Online</h1>
-        <div style={{ display: "flex", gap: "10px" }}>
+        <div className="header-actions">
+          {customer ? (
+            <>
+              <span>👤 {customer.name}</span>
+              <button onClick={handleLogout} className="header-btn logout">
+                Cerrar Sesión
+              </button>
+            </>
+          ) : (
+            <button onClick={() => window.location.href = "/customer-login"} className="header-btn login">
+              Iniciar Sesión
+            </button>
+          )}
           <span>🛒 {cart.length} productos</span>
-          <a href="/login" style={{ color: "#4a90e2", textDecoration: "none" }}>
-            👤 Admin Login
-          </a>
+          {cart.length > 0 && (
+            <button onClick={() => window.location.href = "/cart"} className="header-btn cart">
+              Ver Carrito
+            </button>
+          )}
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "30px" }}>
-        {/* Productos */}
-        <div>
-          <h2>Productos Disponibles</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "20px" }}>
-            {products.map(product => (
-              <div key={product.guidCode} className="dashboard-card">
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Buscar productos..."
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="search-input"
+        />
+      </div>
+
+      <div className="main-grid">
+        <div className="products-section">
+          <div className="products-header">
+            <h2>Productos Disponibles</h2>
+            <span className="products-info">
+              Página {currentPage} de {totalPages} ({filteredProducts.length} productos)
+            </span>
+          </div>
+          
+          <div className="products-grid">
+            {currentProducts.map(product => (
+              <div key={product.guidCode} className="product-card">
                 <h3>{product.name}</h3>
                 <p><strong>SKU:</strong> {product.sku}</p>
-                <p>{product.description}</p>
-                <p><strong>Precio:</strong> ${product.unitPrice}</p>
-                <p><strong>Stock:</strong> {product.stock}</p>
-                <button 
-                  className="btn-primary"
-                  onClick={() => addToCart(product)}
-                  disabled={product.stock <= 0}
-                >
-                  {product.stock <= 0 ? "Sin Stock" : "Agregar al Carrito"}
-                </button>
+                {product.description && <p>{product.description}</p>}
+                <p><strong>Precio:</strong> ${product.currentUnitPrice}</p>
+                <p><strong>Stock:</strong> {product.stockQuantity}</p>
+                <div className="product-actions">
+                  <input 
+                    type="number" 
+                    min="1" 
+                    defaultValue="1"
+                    id={`qty-${product.guidCode}`}
+                    className="quantity-input"
+                  />
+                  <button 
+                    className="btn-primary add-btn"
+                    onClick={() => {
+                      const qty = parseInt(document.getElementById(`qty-${product.guidCode}`).value) || 1;
+                      addToCart(product, qty);
+                    }}
+                    disabled={product.stockQuantity <= 0}
+                  >
+                    {product.stockQuantity <= 0 ? "Sin Stock" : "Agregar"}
+                  </button>
+                </div>
               </div>
             ))}
           </div>
+          
+          {totalPages > 1 && (
+            <div className="pagination">
+              <button 
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="pagination-btn"
+              >
+                ← Anterior
+              </button>
+              <span className="pagination-info">Página {currentPage} de {totalPages}</span>
+              <button 
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="pagination-btn"
+              >
+                Siguiente →
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Carrito */}
-        <div>
-          <div className="dashboard-card">
+        <div className="cart-section">
+          <div className="cart-card">
             <h3>🛒 Carrito de Compras</h3>
             {cart.length === 0 ? (
               <p>El carrito está vacío</p>
             ) : (
               <>
                 {cart.map(item => (
-                  <div key={item.guidCode} style={{ borderBottom: "1px solid #eee", padding: "10px 0" }}>
+                  <div key={item.guidCode} className="cart-item">
                     <h4>{item.name}</h4>
-                    <p>${item.unitPrice} x {item.quantity}</p>
-                    <div style={{ display: "flex", gap: "5px", alignItems: "center" }}>
+                    <p>${item.currentUnitPrice || item.unitPrice} x {item.quantity}</p>
+                    <div className="cart-item-actions">
                       <button onClick={() => updateQuantity(item.guidCode, item.quantity - 1)}>-</button>
                       <span>{item.quantity}</span>
                       <button onClick={() => updateQuantity(item.guidCode, item.quantity + 1)}>+</button>
-                      <button onClick={() => removeFromCart(item.guidCode)} style={{ marginLeft: "10px", color: "red" }}>
+                      <button onClick={() => removeFromCart(item.guidCode)} className="remove-btn">
                         Eliminar
                       </button>
                     </div>
                   </div>
                 ))}
-                <div style={{ marginTop: "15px", fontSize: "18px", fontWeight: "bold" }}>
+                <div className="cart-total">
                   Total: ${getTotalPrice().toFixed(2)}
                 </div>
-                <button 
-                  className="btn-primary" 
-                  onClick={handleCheckout}
-                  style={{ width: "100%", marginTop: "15px" }}
-                >
-                  Comprar
+                <button className="btn-primary checkout-btn" onClick={handleCheckout}>
+                  {customer ? "Comprar" : "Iniciar Compra"}
                 </button>
               </>
             )}

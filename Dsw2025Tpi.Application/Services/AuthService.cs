@@ -60,7 +60,8 @@ namespace Dsw2025Tpi.Data.Services
                 Subject = new ClaimsIdentity(new[]
                 {
                     new Claim(ClaimTypes.NameIdentifier, admin.GuidCode.ToString()),
-                    new Claim(ClaimTypes.Name, admin.Nombre)
+                    new Claim(ClaimTypes.Name, admin.Nombre),
+                    new Claim(ClaimTypes.Role, "Admin")
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(int.Parse(_configuration["jwt:ExpiryMinutes"])),
                 Issuer = _configuration["jwt:Issuer"],

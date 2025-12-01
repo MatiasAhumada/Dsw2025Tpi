@@ -1,9 +1,9 @@
 using Dsw2025Tpi.Application.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Dsw2025Tpi.Api.Controllers;
-[Authorize]
 [ApiController]
 [Route("api/orders")]
 public class OrdersController : ControllerBase
@@ -16,6 +16,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPost]
+    [AllowAnonymous]
     public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest.RequestOrder request)
     {
         if (!ModelState.IsValid)
@@ -51,6 +52,7 @@ public class OrdersController : ControllerBase
         }
     }
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetOrderById(Guid id)
     {
         var order = await _orderService.GetOrderById(id);
@@ -79,6 +81,7 @@ public class OrdersController : ControllerBase
         return Ok(response);
     }
     [HttpGet]
+    [Authorize]
     public async Task<IActionResult> GetAllOrders(
     [FromQuery] string? status,
     [FromQuery] Guid? customerId,
@@ -116,6 +119,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPut("{id}/status")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateOrderStatus(Guid id, [FromBody] UpdateOrderStatusRequest request)
     {
         try

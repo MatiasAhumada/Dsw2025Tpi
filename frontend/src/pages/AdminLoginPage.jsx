@@ -2,41 +2,41 @@ import React from "react";
 import { useState } from "react";
 import "./Auth.css";
 import { useNavigate } from "react-router-dom";
+import api from "../services/api";
 
 export default function AdminLoginPage() {
   const [usuario, setUsuario] = useState("");
   const [contraseña, setContraseña] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false); // Cree este estado porque el mensaje de error se muestra menos de un segundo.
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setErrorMsg("");
+    setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5142/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ Nombre: usuario, Dni: contraseña }),
+      const response = await api.post('/auth/login', {
+        Nombre: usuario,
+        Dni: contraseña
       });
 
-      if (!res.ok) {
-        setErrorMsg("Usuario o contraseña incorrectos");
-        return;
-      }
-
-      const data = await res.json();
-
-      // Guardar token
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("token", response.data.token);
       localStorage.setItem("userType", "Admin");
+      navigate("/admin");
 
-      // Redirigir al dashboard admin
-      navigate("/dashboard");
-
-    } catch (err) {
-      console.error(err);
-      setErrorMsg("Error al conectar con el servidor");
+    } catch (error) {
+      console.error('Error en login:', error);
+      if (error.response?.status === 401) {
+        setErrorMsg("Usuario o contraseña incorrectos");
+      } else if (error.response?.status === 400) {
+        setErrorMsg("Datos inválidos");
+      } else {
+        setErrorMsg("Error al conectar con el servidor");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,22 +56,18 @@ export default function AdminLoginPage() {
 
           <input
             type="password"
-            placeholder="Contraseña (DNI)"
+            placeholder="Contraseña"
             value={contraseña}
             onChange={(e) => setContraseña(e.target.value)}
             required
           />
 
-          <button type="submit" className="btn-primary">
-            Ingresar como Admin
+          <button type="submit" className="btn-primary" disabled={loading}>
+            {loading ? "Ingresando..." : "Ingresar como Admin"}
           </button>
         </form>
 
         {errorMsg && <p style={{ color: "red", marginTop: "10px" }}>{errorMsg}</p>}
-
-        <p className="auth-link">
-          <a href="/">← Volver a la tienda</a>
-        </p>
       </div>
     </div>
   );

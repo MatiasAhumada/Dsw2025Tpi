@@ -5,9 +5,11 @@ import { useNavigate } from "react-router-dom";
 
 export default function CustomerLoginPage() {
   const [isLogin, setIsLogin] = useState(true);
+  const [usuario, setUsuario] = useState("");
+  const [contrasena, setContrasena] = useState("");
   const [email, setEmail] = useState("");
-  const [nombre, setNombre] = useState("");
-  const [dni, setDni] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [confirmarContrasena, setConfirmarContrasena] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
 
@@ -16,27 +18,24 @@ export default function CustomerLoginPage() {
     setErrorMsg("");
 
     try {
-      // Aquí necesitaremos crear el endpoint de login para customer
-      const res = await fetch("http://localhost:5142/api/auth/login/customer", {
+      const res = await fetch("http://localhost:5142/api/customers/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ Email: email, Dni: dni }),
+        body: JSON.stringify({ Name: usuario, Dni: contrasena }),
       });
 
       if (!res.ok) {
-        setErrorMsg("Email o contraseña incorrectos");
+        const error = await res.json();
+        setErrorMsg(error.error || "Error al iniciar sesión");
         return;
       }
 
       const data = await res.json();
 
-      // Guardar token y datos
       localStorage.setItem("token", data.token);
       localStorage.setItem("userType", "Customer");
-      localStorage.setItem("userData", JSON.stringify({ email, name: nombre }));
-
-      // Redirigir al checkout
-      navigate("/checkout");
+      localStorage.setItem("userData", JSON.stringify(data.customer));
+      navigate("/");
 
     } catch (err) {
       console.error(err);
@@ -48,15 +47,20 @@ export default function CustomerLoginPage() {
     e.preventDefault();
     setErrorMsg("");
 
+    if (contrasena !== confirmarContrasena) {
+      setErrorMsg("Las contraseñas no coinciden");
+      return;
+    }
+
     try {
-      const res = await fetch("http://localhost:5142/api/register/customer", {
+      const res = await fetch("http://localhost:5142/api/customers/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-          Email: email, 
-          Name: nombre, 
-          PhoneNumber: "", 
-          Dni: dni 
+          Email: email,
+          Name: usuario, 
+          PhoneNumber: telefono,
+          Dni: contrasena 
         }),
       });
 
@@ -66,8 +70,8 @@ export default function CustomerLoginPage() {
         return;
       }
 
-      // Registro exitoso, ahora hacer login automático
-      handleLogin(e);
+      alert("¡Registro exitoso! Ahora puedes iniciar sesión.");
+      setIsLogin(true);
 
     } catch (err) {
       console.error(err);
@@ -99,31 +103,61 @@ export default function CustomerLoginPage() {
         </div>
 
         <form onSubmit={isLogin ? handleLogin : handleRegister}>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-
-          {!isLogin && (
-            <input
-              type="text"
-              placeholder="Nombre completo"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-              required
-            />
+          {isLogin ? (
+            <>
+              <input
+                type="text"
+                placeholder="Usuario"
+                value={usuario}
+                onChange={(e) => setUsuario(e.target.value)}
+                required
+              />
+              <input
+                type="password"
+                placeholder="Contraseña (DNI)"
+                value={contrasena}
+                onChange={(e) => setContrasena(e.target.value)}
+                required
+              />
+            </>
+          ) : (
+            <>
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <input
+                type="text"
+                placeholder="Usuario"
+                value={usuario}
+                onChange={(e) => setUsuario(e.target.value)}
+                required
+              />
+              <input
+                type="tel"
+                placeholder="Teléfono"
+                value={telefono}
+                onChange={(e) => setTelefono(e.target.value)}
+              />
+              <input
+                type="password"
+                placeholder="Contraseña"
+                value={contrasena}
+                onChange={(e) => setContrasena(e.target.value)}
+                required
+              />
+              <input
+                type="password"
+                placeholder="Confirmar Contraseña"
+                value={confirmarContrasena}
+                onChange={(e) => setConfirmarContrasena(e.target.value)}
+                required
+              />
+            </>
           )}
-
-          <input
-            type="password"
-            placeholder="Contraseña (DNI)"
-            value={dni}
-            onChange={(e) => setDni(e.target.value)}
-            required
-          />
 
           <button type="submit" className="btn-primary">
             {isLogin ? "Iniciar Sesión y Comprar" : "Registrarse y Comprar"}

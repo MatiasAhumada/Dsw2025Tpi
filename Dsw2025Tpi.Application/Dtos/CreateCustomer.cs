@@ -14,4 +14,9 @@ namespace Dsw2025Tpi.Application.Dtos
         string PhoneNumber,
         string Dni
     );
+
+    public record CustomerAuthRequest(
+        string Name,
+        string Dni
+    );
 }

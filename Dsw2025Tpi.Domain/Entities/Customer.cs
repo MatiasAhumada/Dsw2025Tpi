@@ -20,8 +20,6 @@ public class Customer : EntityBase
             throw new ArgumentException("El correo electrónico es requerido");
         if (string.IsNullOrWhiteSpace(dni))
             throw new ArgumentException("El DNI es requerido");
-            
-        // PhoneNumber es opcional, puede estar vacío
 
         Email = email;
         Name = name;
