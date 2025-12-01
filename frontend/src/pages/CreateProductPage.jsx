@@ -117,35 +117,35 @@ export default function CreateProductPage() {
     <div className="dashboard-layout">
       <nav className="sidebar">
         <div className="sidebar-header">
-          <h2>🛠️ Admin Panel</h2>
+          <h2>Admin Panel</h2>
         </div>
         <ul className="nav-menu">
           <li>
             <button onClick={() => navigate("/admin")}>
-              📊 General
+              General
             </button>
           </li>
           <li className="active">
             <button onClick={() => navigate("/admin/products")}>
-              📦 Productos
+              Productos
             </button>
           </li>
           <li>
             <button onClick={() => navigate("/admin/orders")}>
-              📈 Órdenes
+              Órdenes
             </button>
           </li>
         </ul>
         <div className="sidebar-footer">
           <button onClick={handleLogout} className="logout-btn">
-            🚪 Cerrar Sesión
+            Cerrar Sesión
           </button>
         </div>
       </nav>
       
       <main className="main-content">
         <div className="section-header">
-          <h2>➕ Crear Producto</h2>
+          <h2>Crear Producto</h2>
           <button 
             onClick={() => navigate("/admin/products")}
             className="btn-secondary"

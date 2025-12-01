@@ -116,7 +116,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="checkout-container">
-      <h1>🛒 Finalizar Compra</h1>
+      <h1>Finalizar Compra</h1>
 
       <div className="checkout-card">
         <h3>Resumen del Pedido</h3>

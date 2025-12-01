@@ -43,7 +43,7 @@ export default function AdminLoginPage() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2>🔐 Login Administrador</h2>
+        <h2>Login Administrador</h2>
 
         <form onSubmit={handleLogin}>
           <input

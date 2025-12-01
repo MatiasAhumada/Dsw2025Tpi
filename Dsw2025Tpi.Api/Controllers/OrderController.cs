@@ -90,14 +90,15 @@ public class OrdersController : ControllerBase
     public async Task<IActionResult> GetAllOrders(
         [FromQuery] string? status,
         [FromQuery] Guid? customerId,
+        [FromQuery] string? search,
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10)
     {
         try
         {
-            var orders = await _orderService.GetAllOrdersAsync(status, customerId, pageNumber, pageSize);
+            var (orders, totalCount) = await _orderService.GetAllOrdersAsync(status, customerId, search, pageNumber, pageSize);
 
-            var response = orders.Select(order => new CreateOrderRequest.ResponseOrder(
+            var orderResponses = orders.Select(order => new CreateOrderRequest.ResponseOrder(
                 OrderId: order.GuidCode,
                 CustomerId: order.CustomerId.ToString(),
                 ShippingAddress: order.ShippingAddress,
@@ -115,7 +116,10 @@ public class OrdersController : ControllerBase
                 )).ToList()
             ));
 
-            return Ok(response);
+            var paginatedResponse = new PaginatedResponse<CreateOrderRequest.ResponseOrder>(
+                orderResponses, pageNumber, pageSize, totalCount);
+
+            return Ok(paginatedResponse);
         }
         catch (Exception ex)
         {
