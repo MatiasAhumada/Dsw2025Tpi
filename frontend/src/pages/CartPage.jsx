@@ -87,7 +87,7 @@ export default function CartPage() {
 
   return (
     <div className="cart-container">
-      <h1>🛒 Carrito de Compras</h1>
+      <h1>Carrito de Compras</h1>
 
       <div className="cart-summary">
         <h3>Productos</h3>

@@ -64,7 +64,7 @@ public class OrderService
         );
     }
 
-    public async Task<IEnumerable<Order>> GetAllOrdersAsync(string? status, Guid? customerId, int pageNumber, int pageSize)
+    public async Task<(IEnumerable<Order> Orders, int TotalCount)> GetAllOrdersAsync(string? status, Guid? customerId, string? search, int pageNumber, int pageSize)
     {
         Expression<Func<Order, bool>> filter = o => true;
 
@@ -79,17 +79,29 @@ public class OrderService
             filter = o => currentFilter.Compile()(o) && o.CustomerId == customerId;
         }
 
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var currentFilter = filter;
+            filter = o => currentFilter.Compile()(o) && 
+                         (o.GuidCode.ToString().ToLower().Contains(search.ToLower()) ||
+                          o.CustomerId.ToString().ToLower().Contains(search.ToLower()) ||
+                          o.TotalAmount.ToString().Contains(search));
+        }
+
         var allOrders = await _repository.GetFiltered<Order>(filter,
             nameof(Order.OrderItems),
             $"{nameof(Order.OrderItems)}.{nameof(OrderItem.Product)}",
             nameof(Order.Customer)
         );
 
-        return allOrders?
+        var totalCount = allOrders?.Count() ?? 0;
+        var paginatedOrders = allOrders?
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToList()
             ?? new List<Order>();
+
+        return (paginatedOrders, totalCount);
     }
     public async Task UpdateOrderStatusAsync(Guid orderId, OrderStatus newStatus)
     {

@@ -126,11 +126,11 @@ export default function PublicProductsPage() {
   return (
     <div className="public-container">
       <div className="public-header">
-        <h1>🛍️ Tienda Online</h1>
+        <h1>Tienda Online</h1>
         <div className="header-actions">
           {customer ? (
             <>
-              <span>👤 {customer.name}</span>
+              <span>{customer.name}</span>
               <button onClick={handleLogout} className="header-btn logout">
                 Cerrar Sesión
               </button>
@@ -140,7 +140,7 @@ export default function PublicProductsPage() {
               Iniciar Sesión
             </button>
           )}
-          <span>🛒 {cart.length} productos</span>
+          <span>{cart.length} productos</span>
           {cart.length > 0 && (
             <button onClick={() => window.location.href = "/cart"} className="header-btn cart">
               Ver Carrito
@@ -225,7 +225,7 @@ export default function PublicProductsPage() {
 
         <div className="cart-section">
           <div className="cart-card">
-            <h3>🛒 Carrito de Compras</h3>
+            <h3>Carrito de Compras</h3>
             {cart.length === 0 ? (
               <p>El carrito está vacío</p>
             ) : (

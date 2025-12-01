@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./DashboardPage.css";
+import api from "../services/api";
 
 export default function AdminOrdersPage() {
   const navigate = useNavigate();
@@ -10,6 +11,9 @@ export default function AdminOrdersPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [ordersPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
+  const [searchTimeout, setSearchTimeout] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -26,30 +30,29 @@ export default function AdminOrdersPage() {
 
   const fetchOrders = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const params = new URLSearchParams({
-        pageNumber: currentPage.toString(),
-        pageSize: ordersPerPage.toString()
-      });
+      const params = {
+        pageNumber: currentPage,
+        pageSize: ordersPerPage
+      };
       
       if (statusFilter !== "all") {
-        params.append("status", statusFilter);
+        params.status = statusFilter;
       }
       
-      const response = await fetch(`http://localhost:5142/api/orders?${params}`, {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setOrders(Array.isArray(data) ? data : []);
-      } else {
-        console.error("Error en la respuesta:", response.status);
-        setOrders([]);
+      if (search.trim()) {
+        params.search = search.trim();
       }
+      
+      const response = await api.get('/orders', { params });
+      
+      setOrders(Array.isArray(response.data.data) ? response.data.data : []);
+      setTotalPages(response.data.totalPages || 0);
+      setTotalCount(response.data.totalCount || 0);
     } catch (error) {
       console.error("Error al cargar órdenes:", error);
       setOrders([]);
+      setTotalPages(0);
+      setTotalCount(0);
     } finally {
       setLoading(false);
     }
@@ -59,14 +62,31 @@ export default function AdminOrdersPage() {
     fetchOrders();
   }, [currentPage, statusFilter]);
 
-  const filteredOrders = orders.filter(order => {
-    const matchesSearch = order.orderId.toLowerCase().includes(search.toLowerCase()) ||
-                         order.customerId.toLowerCase().includes(search.toLowerCase()) ||
-                         order.totalAmount.toString().includes(search.toLowerCase());
-    return matchesSearch;
-  });
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearch(value);
+    setCurrentPage(1);
+    
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+    
+    const timeout = setTimeout(() => {
+      fetchOrders();
+    }, 500);
+    
+    setSearchTimeout(timeout);
+  };
 
-  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+  useEffect(() => {
+    return () => {
+      if (searchTimeout) {
+        clearTimeout(searchTimeout);
+      }
+    };
+  }, [searchTimeout]);
+
+
 
   function handleLogout() {
     localStorage.clear();
@@ -81,35 +101,35 @@ export default function AdminOrdersPage() {
     <div className="dashboard-layout">
       <nav className="sidebar">
         <div className="sidebar-header">
-          <h2>🛠️ Admin Panel</h2>
+          <h2>Admin Panel</h2>
         </div>
         <ul className="nav-menu">
           <li>
             <button onClick={() => navigate("/admin")}>
-              📊 General
+              General
             </button>
           </li>
           <li>
             <button onClick={() => navigate("/admin/products")}>
-              📦 Productos
+              Productos
             </button>
           </li>
           <li className="active">
             <button onClick={() => navigate("/admin/orders")}>
-              📈 Órdenes
+              Órdenes
             </button>
           </li>
         </ul>
         <div className="sidebar-footer">
           <button onClick={handleLogout} className="logout-btn">
-            🚪 Cerrar Sesión
+            Cerrar Sesión
           </button>
         </div>
       </nav>
       
       <main className="main-content">
         <div className="section-header">
-          <h2>📈 Gestión de Órdenes</h2>
+          <h2>Gestión de Órdenes</h2>
         </div>
 
         <div className="filters-section">
@@ -117,10 +137,7 @@ export default function AdminOrdersPage() {
             type="text"
             placeholder="Buscar por ID de orden, cliente o por total..."
             value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setCurrentPage(1);
-            }}
+            onChange={handleSearchChange}
             className="search-input"
           />
           <select
@@ -139,7 +156,7 @@ export default function AdminOrdersPage() {
             <option value="Cancelled">Cancelado</option>
           </select>
           <span className="results-info">
-            Mostrando {filteredOrders.length} órdenes
+            Mostrando {orders.length} de {totalCount} órdenes (Página {currentPage} de {totalPages})
           </span>
         </div>
 
@@ -156,7 +173,7 @@ export default function AdminOrdersPage() {
               </tr>
             </thead>
             <tbody>
-              {filteredOrders.map(order => (
+              {orders.map(order => (
                 <tr key={order.orderId}>
                   <td>{order.orderId.substring(0, 8)}...</td>
                   <td>{order.customerId.substring(0, 8)}...</td>
@@ -182,7 +199,7 @@ export default function AdminOrdersPage() {
                   </td>
                 </tr>
               ))}
-              {filteredOrders.length === 0 && (
+              {orders.length === 0 && (
                 <tr>
                   <td colSpan="6" className="no-results">
                     No se encontraron órdenes

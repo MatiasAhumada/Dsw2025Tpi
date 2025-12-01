@@ -50,8 +50,8 @@ export default function DashboardPage() {
           headers: { "Authorization": `Bearer ${token}` }
         });
         if (ordersRes.ok) {
-          const orders = await ordersRes.json();
-          ordersCount = Array.isArray(orders) ? orders.length : 0;
+          const ordersData = await ordersRes.json();
+          ordersCount = ordersData.totalCount || 0;
         } else {
           console.error("Error al obtener órdenes - Status:", ordersRes.status);
         }
@@ -80,7 +80,7 @@ export default function DashboardPage() {
       case "general":
         return (
           <div className="content-section">
-            <h2>📊 Resumen General</h2>
+            <h2>Resumen General</h2>
             <div className="stats-grid">
               <div className="stat-card products">
                 <h2 className="stat-number">{loading ? "..." : stats.products}</h2>
@@ -103,9 +103,9 @@ export default function DashboardPage() {
         return (
           <div className="content-section">
             <div className="section-header">
-              <h2>📦 Gestión de Productos</h2>
+              <h2>Gestión de Productos</h2>
               <button onClick={() => navigate("/admin/products/create")} className="btn-primary">
-                ➕ Crear Producto
+                Crear Producto
               </button>
             </div>
             <div className="section-content">
@@ -123,7 +123,7 @@ export default function DashboardPage() {
         return (
           <div className="content-section">
             <div className="section-header">
-              <h2>📈 Gestión de Órdenes</h2>
+              <h2>Gestión de Órdenes</h2>
             </div>
             <div className="section-content">
               <div className="info-card">
@@ -145,28 +145,28 @@ export default function DashboardPage() {
     <div className="dashboard-layout">
       <nav className="sidebar">
         <div className="sidebar-header">
-          <h2>🛠️ Admin Panel</h2>
+          <h2>Admin Panel</h2>
         </div>
         <ul className="nav-menu">
           <li className={activeSection === "general" ? "active" : ""}>
             <button onClick={() => setActiveSection("general")}>
-              📊 General
+              General
             </button>
           </li>
-          <li className={activeSection === "productos" ? "active" : ""}>
-            <button onClick={() => setActiveSection("productos")}>
-              📦 Productos
+          <li>
+            <button onClick={() => navigate("/admin/products")}>
+              Productos
             </button>
           </li>
-          <li className={activeSection === "ordenes" ? "active" : ""}>
-            <button onClick={() => setActiveSection("ordenes")}>
-              📈 Órdenes
+          <li>
+            <button onClick={() => navigate("/admin/orders")}>
+              Órdenes
             </button>
           </li>
         </ul>
         <div className="sidebar-footer">
           <button onClick={handleLogout} className="logout-btn">
-            🚪 Cerrar Sesión
+            Cerrar Sesión
           </button>
         </div>
       </nav>

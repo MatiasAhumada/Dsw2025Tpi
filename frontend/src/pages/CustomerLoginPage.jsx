@@ -82,7 +82,7 @@ export default function CustomerLoginPage() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2>🛒 Finalizar Compra</h2>
+        <h2>Finalizar Compra</h2>
         <p>Para continuar con tu compra, necesitas iniciar sesión o registrarte</p>
 
         <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
