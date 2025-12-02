@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-export default function PublicProductsPage() {
+export default function PublicProductsForm() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const [customer, setCustomer] = useState(null);
@@ -95,7 +95,7 @@ export default function PublicProductsPage() {
     }
     
     if (customer) {
-      window.location.href = "/checkout";
+      window.location.href = "/cart";
     } else {
       window.location.href = "/customer-login";
     }

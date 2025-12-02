@@ -1,10 +1,8 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import "./DashboardPage.css";
-import api from "../services/api";
+import api from "../../shared/services/api";
 
-export default function DashboardPage() {
+export default function DashboardForm() {
   const navigate = useNavigate();
   const location = useLocation();
   const [stats, setStats] = useState({ products: 0, orders: 0 });
@@ -44,30 +42,24 @@ export default function DashboardPage() {
 
   const fetchStats = async () => {
     try {
-      const token = localStorage.getItem("token");
       let productsCount = 0;
       let ordersCount = 0;
       
       try {
         const productsRes = await api.get('/products/all');
         productsCount = Array.isArray(productsRes.data) ? productsRes.data.length : 0;
-      } catch (error) {
-        
-      }
+      } catch (error) {}
       
       try {
         const ordersRes = await api.get('/orders');
         ordersCount = ordersRes.data.totalCount || 0;
-      } catch (error) {
-        
-      }
+      } catch (error) {}
       
       setStats({
         products: productsCount,
         orders: ordersCount
       });
     } catch (error) {
-      
     } finally {
       setLoading(false);
     }
@@ -156,7 +148,7 @@ export default function DashboardPage() {
               <div className="info-card">
                 <h3>Administrar Usuarios del Sistema</h3>
                 <p>Crear nuevo administrador o cliente</p>
-                <button onClick={() => navigate("/admin/register")} className="btn-secondary">
+                <button onClick={() => navigate("/admin/signup")} className="btn-secondary">
                   Registrar Nuevo Usuario
                 </button>
               </div>
@@ -219,4 +211,5 @@ export default function DashboardPage() {
         {renderContent()}
       </main>
     </div>
-  );}
+  );
+}
