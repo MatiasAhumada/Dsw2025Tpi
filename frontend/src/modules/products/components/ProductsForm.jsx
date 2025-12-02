@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../shared/services/api";
 
-export default function AdminProductsForm() {
+export default function ProductsForm() {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -237,6 +237,7 @@ export default function AdminProductsForm() {
                           Activar
                         </button>
                       )}
+
                     </div>
                   </td>
                 </tr>

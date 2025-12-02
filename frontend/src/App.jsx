@@ -5,13 +5,13 @@ import AdminLoginPage from "./modules/auth/pages/AdminLoginPage";
 import AdminRegisterPage from "./modules/auth/pages/AdminRegisterPage";
 
 import DashboardPage from "./modules/admin/pages/DashboardPage";
-import AdminProductsPage from "./modules/admin/pages/AdminProductsPage";
+import ProductsPage from "./modules/products/pages/ProductsPage";
 import CreateProductPage from "./modules/products/pages/CreateProductPage";
 import EditProductPage from "./modules/products/pages/EditProductPage";
 
 import CustomerLoginPage from "./modules/auth/pages/CustomerLoginPage";
 import CheckoutPage from "./modules/cart/pages/CheckoutPage";
-import AdminOrdersPage from "./modules/orders/pages/AdminOrdersPage";
+import OrdersPage from "./modules/orders/pages/OrdersPage";
 
 import { AuthProvider } from "./modules/auth/context/AuthProvider";
 import { ProtectedRoute } from "./modules/auth/components/ProtectedRoute";
@@ -45,7 +45,7 @@ const routes = createBrowserRouter([
     path: "/admin/products",
     element: (
       <ProtectedRoute>
-        <AdminProductsPage />
+        <ProductsPage />
       </ProtectedRoute>
     ),
   },
@@ -69,7 +69,7 @@ const routes = createBrowserRouter([
     path: "/admin/orders",
     element: (
       <ProtectedRoute>
-        <AdminOrdersPage />
+        <OrdersPage />
       </ProtectedRoute>
     ),
   },

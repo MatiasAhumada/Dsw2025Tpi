@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import api from "../../shared/services/api";
 
 export default function CheckoutForm() {
   const [cart, setCart] = useState([]);
@@ -31,10 +32,8 @@ export default function CheckoutForm() {
 
   const validateCartProducts = async () => {
     try {
-      const response = await fetch("http://localhost:5142/api/products");
-      if (!response.ok) return false;
-      
-      const activeProducts = await response.json();
+      const response = await api.get('/products');
+      const activeProducts = response.data;
       const updatedCart = [];
       let hasChanges = false;
       
@@ -84,25 +83,13 @@ export default function CheckoutForm() {
         }))
       };
 
-      const response = await fetch("http://localhost:5142/api/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(orderRequest)
-      });
-
-      if (response.ok) {
-        const order = await response.json();
-        alert(`¡Orden creada exitosamente! ID: ${order.orderId}`);
-        localStorage.removeItem("cart");
-        window.location.href = "/";
-      } else {
-        const error = await response.json();
-        alert(error.error || "Error al crear la orden");
-      }
+      const response = await api.post('/orders', orderRequest);
+      const order = response.data;
+      alert(`¡Orden creada exitosamente! ID: ${order.orderId}`);
+      localStorage.removeItem("cart");
+      window.location.href = "/";
     } catch (error) {
-      alert("Error de conexión");
+      alert(error.response?.data?.error || "Error al crear la orden");
     } finally {
       setLoading(false);
     }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import api from "../../shared/services/api";
 
 export default function PublicProductsForm() {
   const [products, setProducts] = useState([]);
@@ -23,15 +24,9 @@ export default function PublicProductsForm() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch("http://localhost:5142/api/products");
-      
-      if (response.ok) {
-        const data = await response.json();
-        setProducts(Array.isArray(data) ? data : []);
-      } else {
-        console.error("Error en la respuesta:", response.status);
-        setProducts([]);
-      }
+      const response = await api.get('/products');
+      const data = response.data;
+      setProducts(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error al cargar productos:", error);
       setProducts([]);
