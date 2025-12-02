@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import "./Auth.css";
-import "./CheckoutPage.css";
 
-export default function CheckoutPage() {
+export default function CheckoutForm() {
   const [cart, setCart] = useState([]);
   const [customer, setCustomer] = useState(null);
   const [orderData, setOrderData] = useState({

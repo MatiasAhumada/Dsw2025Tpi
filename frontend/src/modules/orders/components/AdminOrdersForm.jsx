@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./DashboardPage.css";
-import api from "../services/api";
+import api from "../../shared/services/api";
 
-export default function AdminOrdersPage() {
+export default function AdminOrdersForm() {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);

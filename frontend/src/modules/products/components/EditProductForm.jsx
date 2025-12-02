@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import "./DashboardPage.css";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function CreateProductPage() {
+export default function EditProductForm() {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [formData, setFormData] = useState({
     sku: "",
     internalCode: "",
@@ -14,6 +14,7 @@ export default function CreateProductPage() {
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [loadingProduct, setLoadingProduct] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -24,7 +25,39 @@ export default function CreateProductPage() {
       navigate("/login");
       return;
     }
-  }, []);
+    
+    fetchProduct();
+  }, [id]);
+
+  const fetchProduct = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`http://localhost:5142/api/products/${id}`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+
+      if (response.ok) {
+        const product = await response.json();
+        setFormData({
+          sku: product.sku || "",
+          internalCode: product.internalCode || "",
+          name: product.name || "",
+          description: product.description || "",
+          currentUnitPrice: product.currentUnitPrice?.toString() || "",
+          stockQuantity: product.stockQuantity?.toString() || ""
+        });
+      } else {
+        alert("Error al cargar el producto");
+        navigate("/admin/products");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error al conectar con el servidor");
+      navigate("/admin/products");
+    } finally {
+      setLoadingProduct(false);
+    }
+  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -41,8 +74,8 @@ export default function CreateProductPage() {
       newErrors.name = "El nombre es requerido";
     }
 
-    if (!formData.currentUnitPrice || parseFloat(formData.currentUnitPrice) < 0) {
-      newErrors.currentUnitPrice = "El precio debe ser mayor o igual a 0";
+    if (!formData.currentUnitPrice || parseFloat(formData.currentUnitPrice) <= 0) {
+      newErrors.currentUnitPrice = "El precio debe ser mayor que 0";
     }
 
     if (!formData.stockQuantity || parseInt(formData.stockQuantity) < 0) {
@@ -61,8 +94,8 @@ export default function CreateProductPage() {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5142/api/products", {
-        method: "POST",
+      const response = await fetch(`http://localhost:5142/api/products/${id}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
@@ -78,11 +111,11 @@ export default function CreateProductPage() {
       });
 
       if (response.ok) {
-        alert("Producto creado exitosamente");
+        alert("Producto actualizado exitosamente");
         navigate("/admin/products");
       } else {
         const error = await response.json();
-        alert(error.message || "Error al crear el producto");
+        alert(error.message || "Error al actualizar el producto");
       }
     } catch (error) {
       console.error("Error:", error);
@@ -106,6 +139,14 @@ export default function CreateProductPage() {
       }));
     }
   };
+
+  if (loadingProduct) {
+    return (
+      <div style={{ padding: "20px", textAlign: "center" }}>
+        <h2>Cargando producto...</h2>
+      </div>
+    );
+  }
 
   function handleLogout() {
     localStorage.removeItem("token");
@@ -145,7 +186,7 @@ export default function CreateProductPage() {
       
       <main className="main-content">
         <div className="section-header">
-          <h2>Crear Producto</h2>
+          <h2>Editar Producto</h2>
           <button 
             onClick={() => navigate("/admin/products")}
             className="btn-secondary"
@@ -250,7 +291,7 @@ export default function CreateProductPage() {
                 name="currentUnitPrice"
                 value={formData.currentUnitPrice}
                 onChange={handleChange}
-                min="0"
+                min="0.01"
                 step="0.01"
                 style={{ 
                   width: "100%", 
@@ -307,14 +348,14 @@ export default function CreateProductPage() {
               disabled={loading}
               style={{ 
                 padding: "12px 20px", 
-                background: loading ? "#ccc" : "#28a745", 
+                background: loading ? "#ccc" : "#007bff", 
                 color: "white", 
                 border: "none", 
                 borderRadius: "5px", 
                 cursor: loading ? "not-allowed" : "pointer" 
               }}
             >
-              {loading ? "Creando..." : "Crear Producto"}
+              {loading ? "Actualizando..." : "Actualizar Producto"}
             </button>
           </div>
           </form>
