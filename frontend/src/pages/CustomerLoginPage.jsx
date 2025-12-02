@@ -69,7 +69,7 @@ export default function CustomerLoginPage() {
         return;
       }
 
-      alert("¡Registro exitoso! Ahora puedes iniciar sesión.");
+      // Registro exitoso - cambiar a login automáticamente
       setIsLogin(true);
 
     } catch (err) {
@@ -79,144 +79,141 @@ export default function CustomerLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-2">Finalizar Compra</h2>
-        <p className="text-gray-600 text-center mb-6">Para continuar con tu compra, necesitas iniciar sesión o registrarte</p>
-
-        <div className="flex gap-2 mb-6">
-          <button 
-            className={`flex-1 py-2 px-4 rounded-md font-medium transition duration-200 ${
-              isLogin 
-                ? 'bg-purple-300 text-gray-700' 
-                : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
-            }`}
-            onClick={() => setIsLogin(true)}
-          >
-            Iniciar Sesión
-          </button>
-          <button 
-            className={`flex-1 py-2 px-4 rounded-md font-medium transition duration-200 ${
-              !isLogin 
-                ? 'bg-purple-300 text-gray-700' 
-                : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
-            }`}
-            onClick={() => setIsLogin(false)}
-          >
-            Registrarse
-          </button>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md border-l-4 border-blue-500">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">¡Bienvenido!</h2>
+          <p className="text-gray-600">Para continuar con tu compra, necesitas iniciar sesión o registrarte</p>
         </div>
 
-        <form onSubmit={isLogin ? handleLogin : handleRegister} className="space-y-4">
+        <div className="mb-8">
+          <div className="flex bg-gray-100 rounded-lg p-1">
+            <button 
+              className={`flex-1 py-3 px-4 rounded-lg font-semibold text-sm transition duration-200 ${
+                isLogin 
+                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md' 
+                  : 'text-gray-600 hover:bg-gray-200'
+              }`}
+              onClick={() => setIsLogin(true)}
+            >
+              Iniciar Sesión
+            </button>
+            <button 
+              className={`flex-1 py-3 px-4 rounded-lg font-semibold text-sm transition duration-200 ${
+                !isLogin 
+                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md' 
+                  : 'text-gray-600 hover:bg-gray-200'
+              }`}
+              onClick={() => setIsLogin(false)}
+            >
+              Registrarse
+            </button>
+          </div>
+        </div>
+
+        <form onSubmit={isLogin ? handleLogin : handleRegister} className="space-y-5">
           {isLogin ? (
             <>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Usuario</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Usuario</label>
                 <input
                   type="text"
                   value={usuario}
                   onChange={(e) => setUsuario(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 transition duration-200"
+                  placeholder="Ingresa tu usuario"
                   required
                 />
-                {errorMsg && <p className="text-red-500 text-sm mt-1">Error</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Contraseña</label>
                 <input
                   type="password"
                   value={contrasena}
                   onChange={(e) => setContrasena(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 transition duration-200"
+                  placeholder="Ingresa tu contraseña"
                   required
                 />
-                {errorMsg && <p className="text-red-500 text-sm mt-1">Error</p>}
               </div>
             </>
           ) : (
             <>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Usuario</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Usuario</label>
                 <input
                   type="text"
                   value={usuario}
                   onChange={(e) => setUsuario(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 transition duration-200"
+                  placeholder="Elige tu nombre de usuario"
                   required
                 />
-                {errorMsg && <p className="text-red-500 text-sm mt-1">Error</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Email</label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 transition duration-200"
+                  placeholder="tu@email.com"
                   required
                 />
-                {errorMsg && <p className="text-red-500 text-sm mt-1">Error</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                  <option>Seleccione una opción</option>
-                </select>
-                {errorMsg && <p className="text-red-500 text-sm mt-1">Error</p>}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Contraseña</label>
                 <input
                   type="password"
                   value={contrasena}
                   onChange={(e) => setContrasena(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 transition duration-200"
+                  placeholder="Crea una contraseña segura"
                   required
                 />
-                {errorMsg && <p className="text-red-500 text-sm mt-1">Error</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Confirmar contraseña</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Confirmar contraseña</label>
                 <input
                   type="password"
                   value={confirmarContrasena}
                   onChange={(e) => setConfirmarContrasena(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 transition duration-200"
+                  placeholder="Repite tu contraseña"
                   required
                 />
-                {errorMsg && <p className="text-red-500 text-sm mt-1">Error</p>}
               </div>
             </>
           )}
 
-          <div className="space-y-3 pt-4">
+          {errorMsg && (
+            <div className="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg">
+              <div className="flex items-center">
+                <span className="text-red-500 mr-2">⚠</span>
+                {errorMsg}
+              </div>
+            </div>
+          )}
+
+          <div className="pt-6">
             <button
               type="submit"
-              className="w-full bg-purple-300 hover:bg-purple-400 text-gray-700 font-medium py-2 px-4 rounded-md transition duration-200"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 transform hover:scale-105 shadow-lg"
             >
-              {isLogin ? "Iniciar Sesión" : "Registrar Usuario"}
+              {isLogin ? "Iniciar Sesión" : "Crear Cuenta"}
             </button>
-            
-            {isLogin && (
-              <button
-                type="button"
-                className="w-full bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-2 px-4 rounded-md transition duration-200"
-              >
-                Registrar Usuario
-              </button>
-            )}
           </div>
         </form>
 
-        {errorMsg && (
-          <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-            {errorMsg}
-          </div>
-        )}
-
-        <p className="text-center mt-6">
-          <a href="/" className="text-blue-600 hover:text-blue-800">← Volver a la tienda</a>
-        </p>
+        <div className="text-center mt-8">
+          <a 
+            href="/" 
+            className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition duration-200"
+          >
+            <span className="mr-2">←</span>
+            Volver a la tienda
+          </a>
+        </div>
       </div>
     </div>
   );

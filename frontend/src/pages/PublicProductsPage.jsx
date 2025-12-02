@@ -128,85 +128,107 @@ export default function PublicProductsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white shadow-sm border-b">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+      {/* Header */}
+      <div className="bg-white shadow-lg border-b-4 border-gradient-to-r from-blue-500 to-purple-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <h1 className="text-2xl font-bold text-gray-900">Tienda Online</h1>
+          <div className="flex justify-between items-center py-6">
+            <h1 className="text-3xl font-bold text-black">
+              Tienda Online
+            </h1>
             <div className="flex items-center space-x-4">
               {customer ? (
                 <>
-                  <span className="text-gray-700">{customer.name}</span>
+                  <div className="flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-lg">
+                    <span className="text-blue-600 font-medium">{customer.name}</span>
+                  </div>
                   <button 
                     onClick={handleLogout} 
-                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200"
+                    className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200 transform hover:scale-105"
                   >
-                    Cerrar Sesión
+                    Salir
                   </button>
                 </>
               ) : (
                 <button 
                   onClick={() => window.location.href = "/customer-login"} 
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200"
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200 transform hover:scale-105"
                 >
                   Iniciar Sesión
                 </button>
               )}
-              <span className="text-gray-600">{cart.length} productos</span>
-              {cart.length > 0 && (
-                <button 
-                  onClick={() => window.location.href = "/cart"} 
-                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200"
-                >
-                  Ver Carrito
-                </button>
-              )}
+
             </div>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Search Bar */}
         <div className="mb-8">
-          <input
-            type="text"
-            placeholder="Buscar productos..."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
-          />
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Buscar productos por nombre o SKU..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white shadow-lg transition duration-200"
+            />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Products Grid */}
           <div className="lg:col-span-3">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Productos Disponibles</h2>
-              <span className="text-gray-600">
-                Página {currentPage} de {totalPages} ({filteredProducts.length} productos)
-              </span>
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-3xl font-bold text-gray-800">Productos Disponibles</h2>
+              <div className="bg-white px-4 py-2 rounded-lg shadow-md">
+                <span className="text-gray-600 font-medium">
+                  Página {currentPage} de {totalPages} • {filteredProducts.length} productos
+                </span>
+              </div>
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {currentProducts.map(product => (
-                <div key={product.guidCode} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-200">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{product.name}</h3>
-                  <p className="text-sm text-gray-600 mb-1"><strong>SKU:</strong> {product.sku}</p>
-                  {product.description && <p className="text-sm text-gray-600 mb-3">{product.description}</p>}
-                  <p className="text-lg font-bold text-green-600 mb-1">${product.currentUnitPrice}</p>
-                  <p className="text-sm text-gray-600 mb-4"><strong>Stock:</strong> {product.stockQuantity}</p>
+                <div key={product.guidCode} className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition duration-300 transform hover:scale-105 border-l-4 border-blue-500">
+                  <div className="mb-4">
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">{product.name}</h3>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">{product.sku}</span>
+                      <span className={`text-sm px-2 py-1 rounded ${
+                        product.stockQuantity > 10 
+                          ? 'bg-green-100 text-green-800' 
+                          : product.stockQuantity > 0 
+                          ? 'bg-yellow-100 text-yellow-800' 
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        Stock: {product.stockQuantity}
+                      </span>
+                    </div>
+                    {product.description && (
+                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">{product.description}</p>
+                    )}
+                  </div>
+                  
+                  <div className="mb-4">
+                    <div className="text-2xl font-bold text-green-600 mb-2">${product.currentUnitPrice}</div>
+                  </div>
+                  
                   <div className="flex items-center space-x-2">
                     <input 
                       type="number" 
                       min="1" 
+                      max={product.stockQuantity}
                       defaultValue="1"
                       id={`qty-${product.guidCode}`}
-                      className="w-16 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="w-16 px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center font-medium"
                     />
                     <button 
-                      className={`flex-1 py-2 px-4 rounded-md font-medium transition duration-200 ${
+                      className={`flex-1 py-2 px-3 rounded-lg font-medium text-sm transition duration-200 ${
                         product.stockQuantity <= 0 
                           ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
                           : 'bg-blue-500 hover:bg-blue-600 text-white'
@@ -224,20 +246,23 @@ export default function PublicProductsPage() {
               ))}
             </div>
           
+            {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex justify-center items-center space-x-4 mt-8">
+              <div className="flex justify-center items-center space-x-4 mt-12">
                 <button 
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className="px-4 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition duration-200"
+                  className="px-6 py-3 bg-white border-2 border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition duration-200 font-medium shadow-md"
                 >
                   ← Anterior
                 </button>
-                <span className="text-gray-600">Página {currentPage} de {totalPages}</span>
+                <div className="bg-white px-4 py-2 rounded-lg shadow-md">
+                  <span className="text-gray-600 font-medium">Página {currentPage} de {totalPages}</span>
+                </div>
                 <button 
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
-                  className="px-4 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition duration-200"
+                  className="px-6 py-3 bg-white border-2 border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition duration-200 font-medium shadow-md"
                 >
                   Siguiente →
                 </button>
@@ -245,53 +270,47 @@ export default function PublicProductsPage() {
             )}
           </div>
 
+          {/* Shopping Cart Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6 sticky top-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Carrito de Compras</h3>
+            <div className="bg-white rounded-xl shadow-lg p-6 sticky top-8 border-l-4 border-green-500">
+              <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                Carrito de Compras
+              </h3>
               {cart.length === 0 ? (
-                <p className="text-gray-600">El carrito está vacío</p>
+                <div className="text-center py-8">
+                  <p className="text-gray-500 font-medium">El carrito está vacío</p>
+                  <p className="text-sm text-gray-400 mt-2">Agrega productos para comenzar</p>
+                </div>
               ) : (
                 <>
-                  <div className="space-y-4 mb-6">
+                  <div className="space-y-2 mb-6 max-h-96 overflow-y-auto">
                     {cart.map(item => (
-                      <div key={item.guidCode} className="border-b border-gray-200 pb-4">
-                        <h4 className="font-medium text-gray-900">{item.name}</h4>
-                        <p className="text-sm text-gray-600">${item.currentUnitPrice || item.unitPrice} x {item.quantity}</p>
-                        <div className="flex items-center justify-between mt-2">
-                          <div className="flex items-center space-x-2">
-                            <button 
-                              onClick={() => updateQuantity(item.guidCode, item.quantity - 1)}
-                              className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-50"
-                            >
-                              -
-                            </button>
-                            <span className="w-8 text-center">{item.quantity}</span>
-                            <button 
-                              onClick={() => updateQuantity(item.guidCode, item.quantity + 1)}
-                              className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-50"
-                            >
-                              +
-                            </button>
-                          </div>
+                      <div key={item.guidCode} className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <div className="flex-1">
+                          <h4 className="font-medium text-gray-800 text-sm">{item.name}</h4>
+                          <p className="text-xs text-gray-600">${item.currentUnitPrice || item.unitPrice} x {item.quantity}</p>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-xs font-bold text-gray-800">Cant: {item.quantity}</span>
                           <button 
                             onClick={() => removeFromCart(item.guidCode)} 
-                            className="text-red-500 hover:text-red-700 text-sm font-medium"
+                            className="w-6 h-6 flex items-center justify-center bg-red-100 text-red-600 rounded hover:bg-red-200 transition duration-200 text-sm font-bold"
                           >
-                            Eliminar
+                            ×
                           </button>
                         </div>
                       </div>
                     ))}
                   </div>
-                  <div className="border-t border-gray-200 pt-4">
-                    <div className="text-xl font-bold text-gray-900 mb-4">
+                  <div className="border-t-2 border-gray-200 pt-6">
+                    <div className="text-2xl font-bold text-gray-800 mb-6 text-center">
                       Total: ${getTotalPrice().toFixed(2)}
                     </div>
                     <button 
-                      className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-md transition duration-200"
+                      className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-4 px-6 rounded-xl transition duration-200 transform hover:scale-105 shadow-lg"
                       onClick={handleCheckout}
                     >
-                      {customer ? "Comprar" : "Iniciar Compra"}
+                      {customer ? "Finalizar Compra" : "Iniciar Compra"}
                     </button>
                   </div>
                 </>
