@@ -52,7 +52,7 @@ export default function DashboardForm() {
       
       try {
         const ordersRes = await api.get('/orders');
-        ordersCount = ordersRes.data.totalCount || 0;
+        ordersCount = Array.isArray(ordersRes.data) ? ordersRes.data.length : 0;
       } catch (error) {}
       
       setStats({
