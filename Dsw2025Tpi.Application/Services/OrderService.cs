@@ -70,44 +70,13 @@ public class OrderService
         );
     }
 
-    public async Task<(IEnumerable<Order> Orders, int TotalCount)> GetAllOrdersAsync(string? status, Guid? customerId, string? search, int pageNumber, int pageSize)
+    public async Task<IEnumerable<Order>> GetAllOrdersAsync()
     {
-        Expression<Func<Order, bool>> filter = o => true;
-
-        if (!string.IsNullOrWhiteSpace(status) && Enum.TryParse<OrderStatus>(status, true, out var parsedStatus))
-        {
-            filter = o => o.Status == parsedStatus;
-        }
-
-        if (customerId.HasValue)
-        {
-            var currentFilter = filter;
-            filter = o => currentFilter.Compile()(o) && o.CustomerId == customerId;
-        }
-
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            var currentFilter = filter;
-            filter = o => currentFilter.Compile()(o) && 
-                         (o.GuidCode.ToString().ToLower().Contains(search.ToLower()) ||
-                          o.CustomerId.ToString().ToLower().Contains(search.ToLower()) ||
-                          o.TotalAmount.ToString().Contains(search));
-        }
-
-        var allOrders = await _repository.GetFiltered<Order>(filter,
+        return await _repository.GetAll<Order>(
             nameof(Order.OrderItems),
             $"{nameof(Order.OrderItems)}.{nameof(OrderItem.Product)}",
             nameof(Order.Customer)
-        );
-
-        var totalCount = allOrders?.Count() ?? 0;
-        var paginatedOrders = allOrders?
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToList()
-            ?? new List<Order>();
-
-        return (paginatedOrders, totalCount);
+        ) ?? new List<Order>();
     }
     public async Task UpdateOrderStatusAsync(Guid orderId, OrderStatus newStatus)
     {
