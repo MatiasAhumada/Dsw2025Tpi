@@ -27,10 +27,15 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('userType');
-      localStorage.removeItem('userData');
-      window.location.href = '/login';
+      const currentPath = window.location.pathname;
+      const isLoginPage = currentPath === '/login' || currentPath === '/customer-login';
+      
+      if (!isLoginPage) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userType');
+        localStorage.removeItem('userData');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

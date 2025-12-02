@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import PublicProductsPage from "./pages/PublicProductsPage";
 import AdminLoginPage from "./pages/AdminLoginPage";
+import AdminRegisterPage from "./pages/AdminRegisterPage";
 
 import DashboardPage from "./pages/DashboardPage";
 import AdminProductsPage from "./pages/AdminProductsPage";
@@ -18,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/" element={<PublicProductsPage />} />
         <Route path="/login" element={<AdminLoginPage />} />
+        <Route path="/admin/register" element={<AdminRegisterPage />} />
 
         <Route path="/admin" element={<DashboardPage />} />
         <Route path="/admin/products" element={<AdminProductsPage />} />

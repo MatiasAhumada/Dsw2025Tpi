@@ -38,6 +38,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> PostProducts([FromBody] ModeloProducto.Request request)
     {
         try
@@ -76,6 +77,7 @@ public class ProductsController : ControllerBase
 
     [HttpPut]
     [Route("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] ModeloProductoAct.RequestMod request)
     {
         var products = await _service.GetProductById(id);
@@ -105,6 +107,7 @@ public class ProductsController : ControllerBase
 
     [HttpPatch]
     [Route("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> ToggleProductStatus(Guid id)
     {
         var producto = await _service.GetProductById(id);
