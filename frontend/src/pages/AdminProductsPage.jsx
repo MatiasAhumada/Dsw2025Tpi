@@ -11,6 +11,8 @@ export default function AdminProductsPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(10);
+  const [userName, setUserName] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -20,6 +22,13 @@ export default function AdminProductsPage() {
       localStorage.clear();
       navigate("/login");
       return;
+    }
+    
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      setUserName(payload.unique_name || "Admin");
+    } catch (error) {
+      setUserName("Admin");
     }
     
     fetchProducts();
@@ -49,7 +58,6 @@ export default function AdminProductsPage() {
       const response = await api.get('/products/all');
       setProducts(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
-      console.error("Error al cargar productos:", error);
       setProducts([]);
     } finally {
       setLoading(false);
@@ -64,7 +72,6 @@ export default function AdminProductsPage() {
       fetchProducts();
       alert("Producto deshabilitado exitosamente");
     } catch (error) {
-      console.error("Error al deshabilitar producto:", error);
       alert("Error de conexión: " + error.message);
     }
   };
@@ -77,7 +84,6 @@ export default function AdminProductsPage() {
       fetchProducts();
       alert("Producto activado exitosamente");
     } catch (error) {
-      console.error("Error al activar producto:", error);
       alert("Error de conexión: " + error.message);
     }
   };
@@ -107,28 +113,45 @@ export default function AdminProductsPage() {
 
   return (
     <div className="dashboard-layout">
-      <nav className="sidebar">
+      <div className="mobile-header">
+        <button className="hamburger-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>
+          ☰
+        </button>
+        <h1 className="mobile-title">Productos</h1>
+      </div>
+      
+      <div className={`sidebar-overlay ${sidebarOpen ? 'show' : ''}`} onClick={() => setSidebarOpen(false)}></div>
+      
+      <nav className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <h2>Admin Panel</h2>
         </div>
         <ul className="nav-menu">
           <li>
-            <button onClick={() => navigate("/admin")}>
+            <button onClick={() => { navigate("/admin"); setSidebarOpen(false); }}>
               General
             </button>
           </li>
           <li className="active">
-            <button onClick={() => navigate("/admin/products")}>
+            <button onClick={() => { navigate("/admin/products"); setSidebarOpen(false); }}>
               Productos
             </button>
           </li>
           <li>
-            <button onClick={() => navigate("/admin/orders")}>
+            <button onClick={() => { navigate("/admin/orders"); setSidebarOpen(false); }}>
               Órdenes
+            </button>
+          </li>
+          <li>
+            <button onClick={() => { navigate("/admin", { state: { activeSection: "usuarios" } }); setSidebarOpen(false); }}>
+              Usuarios
             </button>
           </li>
         </ul>
         <div className="sidebar-footer">
+          <div className="user-info">
+            <span className="user-name">{userName}</span>
+          </div>
           <button onClick={handleLogout} className="logout-btn">
             Cerrar Sesión
           </button>

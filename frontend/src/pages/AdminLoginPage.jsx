@@ -40,57 +40,57 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md border-l-4 border-blue-500">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">Admin Login</h2>
+          <p className="text-gray-600">Accede al panel de administración</p>
+        </div>
+        
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Usuario</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Usuario</label>
             <input
               type="text"
               value={usuario}
               onChange={(e) => setUsuario(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 transition duration-200"
+              placeholder="Ingresa tu usuario"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Contraseña</label>
             <input
               type="password"
               value={contraseña}
               onChange={(e) => setContraseña(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 transition duration-200"
+              placeholder="Ingresa tu contraseña"
               required
             />
           </div>
 
           {errorMsg && (
-            <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-              {errorMsg}
+            <div className="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg">
+              <div className="flex items-center">
+                <span className="text-red-500 mr-2">⚠</span>
+                {errorMsg}
+              </div>
             </div>
           )}
 
-          <div className="space-y-3">
+          <div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-purple-300 hover:bg-purple-400 text-gray-700 font-medium py-2 px-4 rounded-md transition duration-200 disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none shadow-lg"
             >
               {loading ? "Ingresando..." : "Iniciar Sesión"}
             </button>
-            
-            <button
-              type="button"
-              onClick={() => navigate("/admin/register")}
-              className="w-full bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-2 px-4 rounded-md transition duration-200"
-            >
-              Registrar Usuario
-            </button>
           </div>
         </form>
-
-
       </div>
     </div>
   );

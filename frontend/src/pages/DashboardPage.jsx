@@ -1,14 +1,17 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./DashboardPage.css";
+import api from "../services/api";
 
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [stats, setStats] = useState({ products: 0, orders: 0 });
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState("general");
   const [userName, setUserName] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -25,17 +28,19 @@ export default function DashboardPage() {
       return;
     }
     
+    if (location.state?.activeSection) {
+      setActiveSection(location.state.activeSection);
+    }
     
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       setUserName(payload.unique_name || "Admin");
     } catch (error) {
-      console.error("Error al decodificar token:", error);
       setUserName("Admin");
     }
     
     fetchStats();
-  }, []);
+  }, [location.state]);
 
   const fetchStats = async () => {
     try {
@@ -44,29 +49,17 @@ export default function DashboardPage() {
       let ordersCount = 0;
       
       try {
-        const productsRes = await fetch("http://localhost:5142/api/products/all", {
-          headers: { "Authorization": `Bearer ${token}` }
-        });
-        if (productsRes.ok) {
-          const products = await productsRes.json();
-          productsCount = Array.isArray(products) ? products.length : 0;
-        }
+        const productsRes = await api.get('/products/all');
+        productsCount = Array.isArray(productsRes.data) ? productsRes.data.length : 0;
       } catch (error) {
-        console.error("Error al obtener productos:", error);
+        
       }
       
       try {
-        const ordersRes = await fetch("http://localhost:5142/api/orders", {
-          headers: { "Authorization": `Bearer ${token}` }
-        });
-        if (ordersRes.ok) {
-          const ordersData = await ordersRes.json();
-          ordersCount = ordersData.totalCount || 0;
-        } else {
-          console.error("Error al obtener órdenes - Status:", ordersRes.status);
-        }
+        const ordersRes = await api.get('/orders');
+        ordersCount = ordersRes.data.totalCount || 0;
       } catch (error) {
-        console.error("Error al obtener órdenes:", error);
+        
       }
       
       setStats({
@@ -74,7 +67,7 @@ export default function DashboardPage() {
         orders: ordersCount
       });
     } catch (error) {
-      console.error("Error al obtener estadísticas:", error);
+      
     } finally {
       setLoading(false);
     }
@@ -104,6 +97,13 @@ export default function DashboardPage() {
                 <p className="stat-label">Órdenes en el Sistema</p>
                 <button onClick={() => setActiveSection("ordenes")} className="stat-btn">
                   Ver Órdenes
+                </button>
+              </div>
+              <div className="stat-card users">
+                <h2 className="stat-number">Usuarios</h2>
+                <p className="stat-label">Gestión de Usuarios</p>
+                <button onClick={() => setActiveSection("usuarios")} className="stat-btn">
+                  Administrar
                 </button>
               </div>
             </div>
@@ -146,6 +146,23 @@ export default function DashboardPage() {
             </div>
           </div>
         );
+      case "usuarios":
+        return (
+          <div className="content-section">
+            <div className="section-header">
+              <h2>Gestión de Usuarios</h2>
+            </div>
+            <div className="section-content">
+              <div className="info-card">
+                <h3>Administrar Usuarios del Sistema</h3>
+                <p>Crear nuevo administrador o cliente</p>
+                <button onClick={() => navigate("/admin/register")} className="btn-secondary">
+                  Registrar Nuevo Usuario
+                </button>
+              </div>
+            </div>
+          </div>
+        );
       default:
         return null;
     }
@@ -153,24 +170,38 @@ export default function DashboardPage() {
 
   return (
     <div className="dashboard-layout">
-      <nav className="sidebar">
+      <div className="mobile-header">
+        <button className="hamburger-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>
+          ☰
+        </button>
+        <h1 className="mobile-title">Admin Panel</h1>
+      </div>
+      
+      <div className={`sidebar-overlay ${sidebarOpen ? 'show' : ''}`} onClick={() => setSidebarOpen(false)}></div>
+      
+      <nav className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <h2>Admin Panel</h2>
         </div>
         <ul className="nav-menu">
           <li className={activeSection === "general" ? "active" : ""}>
-            <button onClick={() => setActiveSection("general")}>
+            <button onClick={() => { setActiveSection("general"); setSidebarOpen(false); }}>
               General
             </button>
           </li>
           <li>
-            <button onClick={() => navigate("/admin/products")}>
+            <button onClick={() => { navigate("/admin/products"); setSidebarOpen(false); }}>
               Productos
             </button>
           </li>
           <li>
-            <button onClick={() => navigate("/admin/orders")}>
+            <button onClick={() => { navigate("/admin/orders"); setSidebarOpen(false); }}>
               Órdenes
+            </button>
+          </li>
+          <li className={activeSection === "usuarios" ? "active" : ""}>
+            <button onClick={() => { setActiveSection("usuarios"); setSidebarOpen(false); }}>
+              Usuarios
             </button>
           </li>
         </ul>
@@ -188,5 +219,4 @@ export default function DashboardPage() {
         {renderContent()}
       </main>
     </div>
-  );
-}
+  );}

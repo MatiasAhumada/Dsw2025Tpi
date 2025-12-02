@@ -14,6 +14,10 @@ export default function AdminOrdersPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [searchTimeout, setSearchTimeout] = useState(null);
+  const [copiedId, setCopiedId] = useState(null);
+  const [expandedOrder, setExpandedOrder] = useState(null);
+  const [userName, setUserName] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -23,6 +27,13 @@ export default function AdminOrdersPage() {
       localStorage.clear();
       navigate("/login");
       return;
+    }
+    
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      setUserName(payload.unique_name || "Admin");
+    } catch (error) {
+      setUserName("Admin");
     }
     
     fetchOrders();
@@ -49,7 +60,6 @@ export default function AdminOrdersPage() {
       setTotalPages(response.data.totalPages || 0);
       setTotalCount(response.data.totalCount || 0);
     } catch (error) {
-      console.error("Error al cargar órdenes:", error);
       setOrders([]);
       setTotalPages(0);
       setTotalCount(0);
@@ -78,6 +88,16 @@ export default function AdminOrdersPage() {
     setSearchTimeout(timeout);
   };
 
+  const copyToClipboard = async (orderId) => {
+    try {
+      await navigator.clipboard.writeText(orderId);
+      setCopiedId(orderId);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch (error) {
+      
+    }
+  };
+
   useEffect(() => {
     return () => {
       if (searchTimeout) {
@@ -85,8 +105,6 @@ export default function AdminOrdersPage() {
       }
     };
   }, [searchTimeout]);
-
-
 
   function handleLogout() {
     localStorage.clear();
@@ -99,28 +117,45 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="dashboard-layout">
-      <nav className="sidebar">
+      <div className="mobile-header">
+        <button className="hamburger-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>
+          ☰
+        </button>
+        <h1 className="mobile-title">Órdenes</h1>
+      </div>
+      
+      <div className={`sidebar-overlay ${sidebarOpen ? 'show' : ''}`} onClick={() => setSidebarOpen(false)}></div>
+      
+      <nav className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <h2>Admin Panel</h2>
         </div>
         <ul className="nav-menu">
           <li>
-            <button onClick={() => navigate("/admin")}>
+            <button onClick={() => { navigate("/admin"); setSidebarOpen(false); }}>
               General
             </button>
           </li>
           <li>
-            <button onClick={() => navigate("/admin/products")}>
+            <button onClick={() => { navigate("/admin/products"); setSidebarOpen(false); }}>
               Productos
             </button>
           </li>
           <li className="active">
-            <button onClick={() => navigate("/admin/orders")}>
+            <button onClick={() => { navigate("/admin/orders"); setSidebarOpen(false); }}>
               Órdenes
+            </button>
+          </li>
+          <li>
+            <button onClick={() => { navigate("/admin", { state: { activeSection: "usuarios" } }); setSidebarOpen(false); }}>
+              Usuarios
             </button>
           </li>
         </ul>
         <div className="sidebar-footer">
+          <div className="user-info">
+            <span className="user-name">{userName}</span>
+          </div>
           <button onClick={handleLogout} className="logout-btn">
             Cerrar Sesión
           </button>
@@ -160,54 +195,79 @@ export default function AdminOrdersPage() {
           </span>
         </div>
 
-        <div className="table-container">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>ID Orden</th>
-                <th>Cliente</th>
-                <th>Fecha</th>
-                <th>Total</th>
-                <th>Estado</th>
-                <th>Productos</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map(order => (
-                <tr key={order.orderId}>
-                  <td>{order.orderId.substring(0, 8)}...</td>
-                  <td>{order.customerId.substring(0, 8)}...</td>
-                  <td>{new Date(order.createdAt).toLocaleDateString()}</td>
-                  <td>${order.totalAmount.toFixed(2)}</td>
-                  <td>
+        <div className="orders-list">
+          {orders.map(order => (
+            <div key={order.orderId} className="order-card">
+              <div className="order-summary">
+                <div className="customer-info">
+                  <h3 className="customer-name">
+                    Cliente: {order.customerName || `Usuario ${order.customerId.substring(0, 8)}...`}
+                  </h3>
+                  <span className={`status-badge ${order.status.toLowerCase()}`}>
+                    {order.status}
+                  </span>
+                </div>
+                <button 
+                  onClick={() => setExpandedOrder(expandedOrder === order.orderId ? null : order.orderId)}
+                  className="btn-secondary"
+                >
+                  {expandedOrder === order.orderId ? 'Ocultar' : 'Ver'}
+                </button>
+              </div>
+              
+              {expandedOrder === order.orderId && (
+                <div className="order-details">
+                  <div className="detail-row">
+                    <strong>ID Orden:</strong>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <span>{order.orderId}</span>
+                      <button
+                        onClick={() => copyToClipboard(order.orderId)}
+                        className="btn-edit"
+                        style={{ padding: '2px 6px', fontSize: '10px' }}
+                        title="Copiar ID completo"
+                      >
+                        {copiedId === order.orderId ? '✓' : '📋'}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="detail-row">
+                    <strong>ID Cliente:</strong>
+                    <span>{order.customerId}</span>
+                  </div>
+                  <div className="detail-row">
+                    <strong>Fecha:</strong>
+                    <span>{new Date(order.createdAt).toLocaleDateString()}</span>
+                  </div>
+                  <div className="detail-row">
+                    <strong>Total:</strong>
+                    <span>${order.totalAmount.toFixed(2)}</span>
+                  </div>
+                  <div className="detail-row">
+                    <strong>Estado:</strong>
                     <span className={`status-badge ${order.status.toLowerCase()}`}>
                       {order.status}
                     </span>
-                  </td>
-                  <td>
-                    {order.orderItems.length} producto(s)
-                    <details style={{ marginTop: "5px" }}>
-                      <summary style={{ cursor: "pointer", fontSize: "12px", color: "#007bff" }}>Ver detalles</summary>
-                      <div style={{ marginTop: "5px", fontSize: "12px" }}>
-                        {order.orderItems.map(item => (
-                          <div key={item.productId} style={{ padding: "2px 0" }}>
-                            {item.name} - Qty: {item.quantity} - ${item.unitPrice}
-                          </div>
-                        ))}
-                      </div>
-                    </details>
-                  </td>
-                </tr>
-              ))}
-              {orders.length === 0 && (
-                <tr>
-                  <td colSpan="6" className="no-results">
-                    No se encontraron órdenes
-                  </td>
-                </tr>
+                  </div>
+                  <div className="detail-row">
+                    <strong>Productos ({order.orderItems.length}):</strong>
+                    <div className="products-list">
+                      {order.orderItems.map(item => (
+                        <div key={item.productId} className="product-item">
+                          {item.name} - Cantidad: {item.quantity} - ${item.unitPrice}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               )}
-            </tbody>
-          </table>
+            </div>
+          ))}
+          {orders.length === 0 && (
+            <div className="no-results">
+              No se encontraron órdenes
+            </div>
+          )}
         </div>
 
         {totalPages > 1 && (

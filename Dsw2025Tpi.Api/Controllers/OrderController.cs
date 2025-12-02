@@ -29,7 +29,8 @@ public class OrdersController : ControllerBase
 
             var response = new CreateOrderRequest.ResponseOrder(
                 OrderId: order.GuidCode,
-                CustomerId: order.CustomerId.ToString(), 
+                CustomerId: order.CustomerId.ToString(),
+                CustomerName: order.Customer?.Name ?? "Cliente",
                 ShippingAddress: order.ShippingAddress,
                 BillingAddress: order.BillingAddress,
                 CreatedAt: order.Date,
@@ -74,6 +75,7 @@ public class OrdersController : ControllerBase
         var response = new CreateOrderRequest.ResponseOrder(
             OrderId: order.GuidCode,
             CustomerId: order.CustomerId.ToString(),
+            CustomerName: order.Customer?.Name ?? "Cliente",
             ShippingAddress: order.ShippingAddress,
             BillingAddress: order.BillingAddress,
             CreatedAt: order.Date,
@@ -101,6 +103,7 @@ public class OrdersController : ControllerBase
             var orderResponses = orders.Select(order => new CreateOrderRequest.ResponseOrder(
                 OrderId: order.GuidCode,
                 CustomerId: order.CustomerId.ToString(),
+                CustomerName: order.Customer?.Name ?? "Cliente",
                 ShippingAddress: order.ShippingAddress,
                 BillingAddress: order.BillingAddress,
                 CreatedAt: order.Date,

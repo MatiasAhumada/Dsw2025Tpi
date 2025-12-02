@@ -49,10 +49,15 @@ public class OrderService
         order.SetOrderItems(orderItems);
 
         _ctx.Orders.Add(order);
-
         await _ctx.SaveChangesAsync();
-
-        return order;
+        
+        // Reload order with Customer relationship
+        return await _repository.GetById<Order>(
+            order.GuidCode,
+            nameof(Order.OrderItems),
+            $"{nameof(Order.OrderItems)}.{nameof(OrderItem.Product)}",
+            nameof(Order.Customer)
+        ) ?? order;
     }
 
     public async Task<Order?> GetOrderById(Guid id)
@@ -60,7 +65,8 @@ public class OrderService
         return await _repository.GetById<Order>(
             id,
             nameof(Order.OrderItems),
-            $"{nameof(Order.OrderItems)}.{nameof(OrderItem.Product)}"
+            $"{nameof(Order.OrderItems)}.{nameof(OrderItem.Product)}",
+            nameof(Order.Customer)
         );
     }
 

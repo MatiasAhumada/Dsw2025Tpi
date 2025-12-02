@@ -8,7 +8,7 @@ import DashboardPage from "./pages/DashboardPage";
 import AdminProductsPage from "./pages/AdminProductsPage";
 import CreateProductPage from "./pages/CreateProductPage";
 import EditProductPage from "./pages/EditProductPage";
-import CartPage from "./pages/CartPage";
+
 import CustomerLoginPage from "./pages/CustomerLoginPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import AdminOrdersPage from "./pages/AdminOrdersPage";
@@ -25,7 +25,7 @@ function App() {
         <Route path="/admin/products" element={<AdminProductsPage />} />
         <Route path="/admin/products/create" element={<CreateProductPage />} />
         <Route path="/admin/products/edit/:id" element={<EditProductPage />} />
-        <Route path="/cart" element={<CartPage />} />
+
         <Route path="/customer-login" element={<CustomerLoginPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/admin/orders" element={<AdminOrdersPage />} />

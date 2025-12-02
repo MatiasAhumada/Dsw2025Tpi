@@ -16,8 +16,7 @@ export default function AdminRegisterPage() {
 
   const roles = [
     { value: "Admin", label: "Administrador" },
-    { value: "Manager", label: "Gerente" },
-    { value: "Supervisor", label: "Supervisor" }
+    { value: "Customer", label: "Cliente" }
   ];
 
   const handleChange = (e) => {
@@ -44,15 +43,24 @@ export default function AdminRegisterPage() {
     setLoading(true);
 
     try {
-      await api.post('/auth/register', {
-        Nombre: formData.usuario,
-        Email: formData.email,
-        Dni: formData.contraseña,
-        Role: formData.role
-      });
+      if (formData.role === "Customer") {
+        await api.post('/customers/register', {
+          Name: formData.usuario,
+          Email: formData.email,
+          Dni: formData.contraseña,
+          PhoneNumber: ""
+        });
+      } else {
+        await api.post('/auth/register', {
+          Nombre: formData.usuario,
+          Email: formData.email,
+          Dni: formData.contraseña,
+          Role: formData.role
+        });
+      }
 
-      alert("Usuario registrado exitosamente");
-      navigate("/login");
+      // Usuario registrado exitosamente - se redirige automáticamente
+      navigate("/admin");
 
     } catch (error) {
       console.error('Error en registro:', error);
@@ -67,42 +75,47 @@ export default function AdminRegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-6">Registrar Admin</h2>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md border-l-4 border-green-500">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">Registrar Usuario</h2>
+          <p className="text-gray-600">Crear nuevo administrador o cliente</p>
+        </div>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Usuario</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Usuario</label>
             <input
               type="text"
               name="usuario"
               value={formData.usuario}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 transition duration-200"
+              placeholder="Ingresa el nombre de usuario"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Email</label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 transition duration-200"
+              placeholder="usuario@ejemplo.com"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Rol</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Rol</label>
             <select
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 transition duration-200"
               required
             >
               {roles.map(role => (
@@ -114,50 +127,55 @@ export default function AdminRegisterPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Contraseña</label>
             <input
               type="password"
               name="contraseña"
               value={formData.contraseña}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 transition duration-200"
+              placeholder="Mínimo 6 caracteres"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Confirmar Contraseña</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Confirmar Contraseña</label>
             <input
               type="password"
               name="confirmarContraseña"
               value={formData.confirmarContraseña}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50 transition duration-200"
+              placeholder="Repite la contraseña"
               required
             />
           </div>
 
           {errorMsg && (
-            <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-              {errorMsg}
+            <div className="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg">
+              <div className="flex items-center">
+                <span className="text-red-500 mr-2">⚠</span>
+                {errorMsg}
+              </div>
             </div>
           )}
 
-          <div className="space-y-3">
+          <div className="space-y-3 pt-4">
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-purple-300 hover:bg-purple-400 text-gray-700 font-medium py-2 px-4 rounded-md transition duration-200 disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none shadow-lg"
             >
-              {loading ? "Registrando..." : "Registrar"}
+              {loading ? "Registrando..." : "Registrar Usuario"}
             </button>
             
             <button
               type="button"
-              onClick={() => navigate("/login")}
-              className="w-full bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-2 px-4 rounded-md transition duration-200"
+              onClick={() => navigate("/admin")}
+              className="w-full bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 transform hover:scale-105 shadow-lg"
             >
-              Volver al Login
+              Volver al Dashboard
             </button>
           </div>
         </form>
