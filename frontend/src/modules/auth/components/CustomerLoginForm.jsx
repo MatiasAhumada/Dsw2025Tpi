@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../../shared/services/api";
 
 export default function CustomerLoginForm() {
   const [isLogin, setIsLogin] = useState(true);
@@ -16,19 +17,12 @@ export default function CustomerLoginForm() {
     setErrorMsg("");
 
     try {
-      const res = await fetch("http://localhost:5142/api/customers/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ Name: usuario, Dni: contrasena }),
+      const response = await api.post('/customers/login', {
+        Name: usuario,
+        Dni: contrasena
       });
 
-      if (!res.ok) {
-        const error = await res.json();
-        setErrorMsg(error.error || "Error al iniciar sesión");
-        return;
-      }
-
-      const data = await res.json();
+      const data = response.data;
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("userType", "Customer");
@@ -37,7 +31,7 @@ export default function CustomerLoginForm() {
 
     } catch (err) {
       console.error(err);
-      setErrorMsg("Error al conectar con el servidor");
+      setErrorMsg(err.response?.data?.error || "Error al iniciar sesión");
     }
   };
 
@@ -51,28 +45,18 @@ export default function CustomerLoginForm() {
     }
 
     try {
-      const res = await fetch("http://localhost:5142/api/customers/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          Email: email,
-          Name: usuario, 
-          PhoneNumber: telefono,
-          Dni: contrasena 
-        }),
+      await api.post('/customers/register', {
+        Email: email,
+        Name: usuario,
+        PhoneNumber: telefono,
+        Dni: contrasena
       });
-
-      if (!res.ok) {
-        const error = await res.json();
-        setErrorMsg(error.error || "Error al registrarse");
-        return;
-      }
 
       setIsLogin(true);
 
     } catch (err) {
       console.error(err);
-      setErrorMsg("Error al conectar con el servidor");
+      setErrorMsg(err.response?.data?.error || "Error al registrarse");
     }
   };
 

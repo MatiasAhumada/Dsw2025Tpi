@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import api from "../../shared/services/api";
 
 export default function EditProductForm() {
   const navigate = useNavigate();
@@ -31,28 +32,19 @@ export default function EditProductForm() {
 
   const fetchProduct = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:5142/api/products/${id}`, {
-        headers: { "Authorization": `Bearer ${token}` }
+      const response = await api.get(`/products/${id}`);
+      const product = response.data;
+      setFormData({
+        sku: product.sku || "",
+        internalCode: product.internalCode || "",
+        name: product.name || "",
+        description: product.description || "",
+        currentUnitPrice: product.currentUnitPrice?.toString() || "",
+        stockQuantity: product.stockQuantity?.toString() || ""
       });
-
-      if (response.ok) {
-        const product = await response.json();
-        setFormData({
-          sku: product.sku || "",
-          internalCode: product.internalCode || "",
-          name: product.name || "",
-          description: product.description || "",
-          currentUnitPrice: product.currentUnitPrice?.toString() || "",
-          stockQuantity: product.stockQuantity?.toString() || ""
-        });
-      } else {
-        alert("Error al cargar el producto");
-        navigate("/admin/products");
-      }
     } catch (error) {
       console.error("Error:", error);
-      alert("Error al conectar con el servidor");
+      alert("Error al cargar el producto");
       navigate("/admin/products");
     } finally {
       setLoadingProduct(false);
@@ -93,33 +85,20 @@ export default function EditProductForm() {
 
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:5142/api/products/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          sku: formData.sku,
-          internalCode: formData.internalCode,
-          name: formData.name,
-          description: formData.description || "",
-          currentUnitPrice: parseFloat(formData.currentUnitPrice),
-          stockQuantity: parseInt(formData.stockQuantity)
-        })
+      await api.put(`/products/${id}`, {
+        sku: formData.sku,
+        internalCode: formData.internalCode,
+        name: formData.name,
+        description: formData.description || "",
+        currentUnitPrice: parseFloat(formData.currentUnitPrice),
+        stockQuantity: parseInt(formData.stockQuantity)
       });
 
-      if (response.ok) {
-        alert("Producto actualizado exitosamente");
-        navigate("/admin/products");
-      } else {
-        const error = await response.json();
-        alert(error.message || "Error al actualizar el producto");
-      }
+      alert("Producto actualizado exitosamente");
+      navigate("/admin/products");
     } catch (error) {
       console.error("Error:", error);
-      alert("Error al conectar con el servidor");
+      alert(error.response?.data?.message || "Error al actualizar el producto");
     } finally {
       setLoading(false);
     }
