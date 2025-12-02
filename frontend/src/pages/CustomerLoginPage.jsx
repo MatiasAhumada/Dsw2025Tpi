@@ -1,6 +1,5 @@
 import React from "react";
 import { useState } from "react";
-import "./Auth.css";
 import { useNavigate } from "react-router-dom";
 
 export default function CustomerLoginPage() {
@@ -80,94 +79,143 @@ export default function CustomerLoginPage() {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h2>Finalizar Compra</h2>
-        <p>Para continuar con tu compra, necesitas iniciar sesión o registrarte</p>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
+        <h2 className="text-2xl font-bold text-center mb-2">Finalizar Compra</h2>
+        <p className="text-gray-600 text-center mb-6">Para continuar con tu compra, necesitas iniciar sesión o registrarte</p>
 
-        <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+        <div className="flex gap-2 mb-6">
           <button 
-            className={isLogin ? "btn-primary" : "btn-secondary"}
+            className={`flex-1 py-2 px-4 rounded-md font-medium transition duration-200 ${
+              isLogin 
+                ? 'bg-purple-300 text-gray-700' 
+                : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+            }`}
             onClick={() => setIsLogin(true)}
-            style={{ flex: 1 }}
           >
             Iniciar Sesión
           </button>
           <button 
-            className={!isLogin ? "btn-primary" : "btn-secondary"}
+            className={`flex-1 py-2 px-4 rounded-md font-medium transition duration-200 ${
+              !isLogin 
+                ? 'bg-purple-300 text-gray-700' 
+                : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+            }`}
             onClick={() => setIsLogin(false)}
-            style={{ flex: 1 }}
           >
             Registrarse
           </button>
         </div>
 
-        <form onSubmit={isLogin ? handleLogin : handleRegister}>
+        <form onSubmit={isLogin ? handleLogin : handleRegister} className="space-y-4">
           {isLogin ? (
             <>
-              <input
-                type="text"
-                placeholder="Usuario"
-                value={usuario}
-                onChange={(e) => setUsuario(e.target.value)}
-                required
-              />
-              <input
-                type="password"
-                placeholder="Contraseña (DNI)"
-                value={contrasena}
-                onChange={(e) => setContrasena(e.target.value)}
-                required
-              />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Usuario</label>
+                <input
+                  type="text"
+                  value={usuario}
+                  onChange={(e) => setUsuario(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+                {errorMsg && <p className="text-red-500 text-sm mt-1">Error</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                <input
+                  type="password"
+                  value={contrasena}
+                  onChange={(e) => setContrasena(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+                {errorMsg && <p className="text-red-500 text-sm mt-1">Error</p>}
+              </div>
             </>
           ) : (
             <>
-              <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-              <input
-                type="text"
-                placeholder="Usuario"
-                value={usuario}
-                onChange={(e) => setUsuario(e.target.value)}
-                required
-              />
-              <input
-                type="tel"
-                placeholder="Teléfono"
-                value={telefono}
-                onChange={(e) => setTelefono(e.target.value)}
-              />
-              <input
-                type="password"
-                placeholder="Contraseña"
-                value={contrasena}
-                onChange={(e) => setContrasena(e.target.value)}
-                required
-              />
-              <input
-                type="password"
-                placeholder="Confirmar Contraseña"
-                value={confirmarContrasena}
-                onChange={(e) => setConfirmarContrasena(e.target.value)}
-                required
-              />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Usuario</label>
+                <input
+                  type="text"
+                  value={usuario}
+                  onChange={(e) => setUsuario(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+                {errorMsg && <p className="text-red-500 text-sm mt-1">Error</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+                {errorMsg && <p className="text-red-500 text-sm mt-1">Error</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option>Seleccione una opción</option>
+                </select>
+                {errorMsg && <p className="text-red-500 text-sm mt-1">Error</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
+                <input
+                  type="password"
+                  value={contrasena}
+                  onChange={(e) => setContrasena(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+                {errorMsg && <p className="text-red-500 text-sm mt-1">Error</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Confirmar contraseña</label>
+                <input
+                  type="password"
+                  value={confirmarContrasena}
+                  onChange={(e) => setConfirmarContrasena(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+                {errorMsg && <p className="text-red-500 text-sm mt-1">Error</p>}
+              </div>
             </>
           )}
 
-          <button type="submit" className="btn-primary">
-            {isLogin ? "Iniciar Sesión y Comprar" : "Registrarse y Comprar"}
-          </button>
+          <div className="space-y-3 pt-4">
+            <button
+              type="submit"
+              className="w-full bg-purple-300 hover:bg-purple-400 text-gray-700 font-medium py-2 px-4 rounded-md transition duration-200"
+            >
+              {isLogin ? "Iniciar Sesión" : "Registrar Usuario"}
+            </button>
+            
+            {isLogin && (
+              <button
+                type="button"
+                className="w-full bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-2 px-4 rounded-md transition duration-200"
+              >
+                Registrar Usuario
+              </button>
+            )}
+          </div>
         </form>
 
-        {errorMsg && <p style={{ color: "red", marginTop: "10px" }}>{errorMsg}</p>}
+        {errorMsg && (
+          <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            {errorMsg}
+          </div>
+        )}
 
-        <p className="auth-link">
-          <a href="/">← Volver a la tienda</a>
+        <p className="text-center mt-6">
+          <a href="/" className="text-blue-600 hover:text-blue-800">← Volver a la tienda</a>
         </p>
       </div>
     </div>

@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import "./Auth.css";
-import "./CartPage.css";
 
 export default function CartPage() {
   const [cart, setCart] = useState([]);
@@ -73,11 +71,14 @@ export default function CartPage() {
 
   if (cart.length === 0) {
     return (
-      <div className="auth-container">
-        <div className="auth-card">
-          <h2>Carrito Vacío</h2>
-          <p>No tienes productos en tu carrito</p>
-          <button onClick={() => window.location.href = "/"} className="btn-primary">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Carrito Vacío</h2>
+          <p className="text-gray-600 mb-6">No tienes productos en tu carrito</p>
+          <button 
+            onClick={() => window.location.href = "/"} 
+            className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-6 rounded-md transition duration-200"
+          >
             Ir a la tienda
           </button>
         </div>
@@ -86,26 +87,37 @@ export default function CartPage() {
   }
 
   return (
-    <div className="cart-container">
-      <h1>Carrito de Compras</h1>
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">Carrito de Compras</h1>
 
-      <div className="cart-summary">
-        <h3>Productos</h3>
-        {cart.map(item => (
-          <div key={item.guidCode} className="cart-product">
-            <h4>{item.name}</h4>
-            <p>SKU: {item.sku}</p>
-            <p>Precio: ${item.currentUnitPrice} x {item.quantity} = ${(item.currentUnitPrice * item.quantity).toFixed(2)}</p>
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="text-xl font-semibold text-gray-900 mb-6">Productos</h3>
+          <div className="space-y-4">
+            {cart.map(item => (
+              <div key={item.guidCode} className="border-b border-gray-200 pb-4">
+                <h4 className="text-lg font-medium text-gray-900">{item.name}</h4>
+                <p className="text-sm text-gray-600">SKU: {item.sku}</p>
+                <p className="text-lg font-semibold text-green-600">
+                  ${item.currentUnitPrice} x {item.quantity} = ${(item.currentUnitPrice * item.quantity).toFixed(2)}
+                </p>
+              </div>
+            ))}
           </div>
-        ))}
-        <div className="cart-total">
-          Total: ${getTotalPrice().toFixed(2)}
+          <div className="border-t border-gray-200 pt-6 mt-6">
+            <div className="text-2xl font-bold text-gray-900 mb-6">
+              Total: ${getTotalPrice().toFixed(2)}
+            </div>
+            <button 
+              onClick={handleCheckout} 
+              className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-md transition duration-200"
+            >
+              {localStorage.getItem("userData") && localStorage.getItem("userType") === "Customer" 
+                ? "Finalizar Compra" 
+                : "Iniciar Sesión para Comprar"}
+            </button>
+          </div>
         </div>
-        <button onClick={handleCheckout} className="btn-primary proceed-btn">
-          {localStorage.getItem("userData") && localStorage.getItem("userType") === "Customer" 
-            ? "Finalizar Compra" 
-            : "Iniciar Sesión para Comprar"}
-        </button>
       </div>
     </div>
   );

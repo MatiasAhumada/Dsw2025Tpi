@@ -1,6 +1,5 @@
 import React from "react";
 import { useState } from "react";
-import "./Auth.css";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 
@@ -8,7 +7,7 @@ export default function AdminLoginPage() {
   const [usuario, setUsuario] = useState("");
   const [contraseña, setContraseña] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
-  const [loading, setLoading] = useState(false); // Estado creado por error visual, al hacer click en el botón de login y si el usuario era incorrecto, no se leia el mensaje de error.
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -41,33 +40,56 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h2>Login Administrador</h2>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
+        <form onSubmit={handleLogin} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Usuario</label>
+            <input
+              type="text"
+              value={usuario}
+              onChange={(e) => setUsuario(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
+            />
+            {errorMsg && <p className="text-red-500 text-sm mt-1">Error</p>}
+          </div>
 
-        <form onSubmit={handleLogin}>
-          <input
-            type="text"
-            placeholder="Usuario"
-            value={usuario}
-            onChange={(e) => setUsuario(e.target.value)}
-            required
-          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+            <input
+              type="password"
+              value={contraseña}
+              onChange={(e) => setContraseña(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
+            />
+            {errorMsg && <p className="text-red-500 text-sm mt-1">Error</p>}
+          </div>
 
-          <input
-            type="password"
-            placeholder="Contraseña"
-            value={contraseña}
-            onChange={(e) => setContraseña(e.target.value)}
-            required
-          />
-
-          <button type="submit" className="btn-primary" disabled={loading}>
-            {loading ? "Ingresando..." : "Ingresar como Admin"}
-          </button>
+          <div className="space-y-3">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-purple-300 hover:bg-purple-400 text-gray-700 font-medium py-2 px-4 rounded-md transition duration-200 disabled:opacity-50"
+            >
+              {loading ? "Ingresando..." : "Iniciar Sesión"}
+            </button>
+            
+            <button
+              type="button"
+              className="w-full bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-2 px-4 rounded-md transition duration-200"
+            >
+              Registrar Usuario
+            </button>
+          </div>
         </form>
 
-        {errorMsg && <p style={{ color: "red", marginTop: "10px" }}>{errorMsg}</p>}
+        {errorMsg && (
+          <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            {errorMsg}
+          </div>
+        )}
       </div>
     </div>
   );
