@@ -1,7 +1,6 @@
 using Dsw2025Tpi.Application.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Dsw2025Tpi.Api.Controllers;
 
@@ -88,17 +87,12 @@ public class OrdersController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize]
-    public async Task<IActionResult> GetAllOrders(
-        [FromQuery] string? status,
-        [FromQuery] Guid? customerId,
-        [FromQuery] string? search,
-        [FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 10)
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetAllOrders()
     {
         try
         {
-            var (orders, totalCount) = await _orderService.GetAllOrdersAsync(status, customerId, search, pageNumber, pageSize);
+            var orders = await _orderService.GetAllOrdersAsync();
 
             var orderResponses = orders.Select(order => new CreateOrderRequest.ResponseOrder(
                 OrderId: order.GuidCode,
@@ -119,10 +113,7 @@ public class OrdersController : ControllerBase
                 )).ToList()
             ));
 
-            var paginatedResponse = new PaginatedResponse<CreateOrderRequest.ResponseOrder>(
-                orderResponses, pageNumber, pageSize, totalCount);
-
-            return Ok(paginatedResponse);
+            return Ok(orderResponses ?? new List<CreateOrderRequest.ResponseOrder>());
         }
         catch (Exception ex)
         {

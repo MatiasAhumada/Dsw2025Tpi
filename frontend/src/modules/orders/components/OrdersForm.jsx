@@ -10,9 +10,6 @@ export default function OrdersForm() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [ordersPerPage] = useState(10);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalCount, setTotalCount] = useState(0);
-  const [searchTimeout, setSearchTimeout] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
   const [expandedOrder, setExpandedOrder] = useState(null);
   const [userName, setUserName] = useState("");
@@ -40,52 +37,33 @@ export default function OrdersForm() {
 
   const fetchOrders = async () => {
     try {
-      const params = {
-        pageNumber: currentPage,
-        pageSize: ordersPerPage
-      };
-      
-      if (statusFilter !== "all") {
-        params.status = statusFilter;
-      }
-      
-      if (search.trim()) {
-        params.search = search.trim();
-      }
-      
-      const response = await api.get('/orders', { params });
-      
-      setOrders(Array.isArray(response.data.data) ? response.data.data : []);
-      setTotalPages(response.data.totalPages || 0);
-      setTotalCount(response.data.totalCount || 0);
+      const response = await api.get('/orders');
+      const ordersData = response.data.data || response.data;
+      setOrders(Array.isArray(ordersData) ? ordersData : []);
     } catch (error) {
       setOrders([]);
-      setTotalPages(0);
-      setTotalCount(0);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchOrders();
-  }, [currentPage, statusFilter]);
+  const filteredOrders = orders.filter(order => {
+    const orderId = order.orderId || order.OrderId || '';
+    const customerName = order.customerName || order.CustomerName || '';
+    const totalAmount = order.totalAmount || order.TotalAmount || 0;
+    const status = order.status || order.Status || '';
+    
+    const matchesSearch = orderId.toString().includes(search) ||
+                         customerName.toLowerCase().includes(search.toLowerCase()) ||
+                         totalAmount.toString().includes(search);
+    const matchesStatus = statusFilter === "all" || status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
-  const handleSearchChange = (e) => {
-    const value = e.target.value;
-    setSearch(value);
-    setCurrentPage(1);
-    
-    if (searchTimeout) {
-      clearTimeout(searchTimeout);
-    }
-    
-    const timeout = setTimeout(() => {
-      fetchOrders();
-    }, 500);
-    
-    setSearchTimeout(timeout);
-  };
+  const indexOfLastOrder = currentPage * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
+  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
 
   const copyToClipboard = async (orderId) => {
     try {
@@ -97,13 +75,7 @@ export default function OrdersForm() {
     }
   };
 
-  useEffect(() => {
-    return () => {
-      if (searchTimeout) {
-        clearTimeout(searchTimeout);
-      }
-    };
-  }, [searchTimeout]);
+
 
   function handleLogout() {
     localStorage.clear();
@@ -171,7 +143,7 @@ export default function OrdersForm() {
             type="text"
             placeholder="Buscar por ID de orden, cliente o por total..."
             value={search}
-            onChange={handleSearchChange}
+            onChange={(e) => setSearch(e.target.value)}
             className="search-input"
           />
           <select
@@ -190,70 +162,79 @@ export default function OrdersForm() {
             <option value="Cancelled">Cancelado</option>
           </select>
           <span className="results-info">
-            Mostrando {orders.length} de {totalCount} órdenes (Página {currentPage} de {totalPages})
+            Mostrando {currentOrders.length} de {filteredOrders.length} órdenes
           </span>
         </div>
 
         <div className="orders-list">
-          {orders.map(order => (
-            <div key={order.orderId} className="order-card">
+          {currentOrders.map(order => {
+            const orderId = order.orderId || order.OrderId;
+            const customerName = order.customerName || order.CustomerName;
+            const customerId = order.customerId || order.CustomerId;
+            const status = order.status || order.Status;
+            const totalAmount = order.totalAmount || order.TotalAmount;
+            const createdAt = order.createdAt || order.CreatedAt;
+            const orderItems = order.orderItems || order.OrderItems || [];
+            
+            return (
+            <div key={orderId} className="order-card">
               <div className="order-summary">
                 <div className="customer-info">
                   <h3 className="customer-name">
-                    Cliente: {order.customerName || `Usuario ${order.customerId.substring(0, 8)}...`}
+                    Cliente: {customerName || `Usuario ${customerId?.substring(0, 8)}...`}
                   </h3>
-                  <span className={`status-badge ${order.status.toLowerCase()}`}>
-                    {order.status}
+                  <span className={`status-badge ${status?.toLowerCase()}`}>
+                    {status}
                   </span>
                 </div>
                 <button 
-                  onClick={() => setExpandedOrder(expandedOrder === order.orderId ? null : order.orderId)}
+                  onClick={() => setExpandedOrder(expandedOrder === orderId ? null : orderId)}
                   className="btn-secondary"
                 >
-                  {expandedOrder === order.orderId ? 'Ocultar' : 'Ver'}
+                  {expandedOrder === orderId ? 'Ocultar' : 'Ver'}
                 </button>
               </div>
               
-              {expandedOrder === order.orderId && (
+              {expandedOrder === orderId && (
                 <div className="order-details">
                   <div className="detail-row">
                     <strong>ID Orden:</strong>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      <span>{order.orderId}</span>
+                      <span>{orderId}</span>
                       <button
-                        onClick={() => copyToClipboard(order.orderId)}
+                        onClick={() => copyToClipboard(orderId)}
                         className="btn-edit"
                         style={{ padding: '2px 6px', fontSize: '10px' }}
                         title="Copiar ID completo"
                       >
-                        {copiedId === order.orderId ? '✓' : '📋'}
+                        {copiedId === orderId ? '✓' : '📋'}
                       </button>
                     </div>
                   </div>
                   <div className="detail-row">
                     <strong>ID Cliente:</strong>
-                    <span>{order.customerId}</span>
+                    <span>{customerId}</span>
                   </div>
                   <div className="detail-row">
                     <strong>Fecha:</strong>
-                    <span>{new Date(order.createdAt).toLocaleDateString()}</span>
+                    <span>{new Date(createdAt).toLocaleDateString()}</span>
                   </div>
                   <div className="detail-row">
                     <strong>Total:</strong>
-                    <span>${order.totalAmount.toFixed(2)}</span>
+                    <span>${totalAmount?.toFixed(2)}</span>
                   </div>
                   <div className="detail-row">
                     <strong>Estado:</strong>
-                    <span className={`status-badge ${order.status.toLowerCase()}`}>
-                      {order.status}
+                    <span className={`status-badge ${status?.toLowerCase()}`}>
+                      {status}
                     </span>
                   </div>
                   <div className="detail-row">
-                    <strong>Productos ({order.orderItems.length}):</strong>
+                    <strong>Productos ({orderItems.length}):</strong>
                     <div className="products-list">
-                      {order.orderItems.map(item => (
-                        <div key={item.productId} className="product-item">
-                          {item.name} - Cantidad: {item.quantity} - ${item.unitPrice}
+                      {orderItems.map(item => (
+                        <div key={item.productId || item.ProductId} className="product-item">
+                          {item.name || item.Name} - Cantidad: {item.quantity || item.Quantity} - ${item.unitPrice || item.UnitPrice}
                         </div>
                       ))}
                     </div>
@@ -261,10 +242,11 @@ export default function OrdersForm() {
                 </div>
               )}
             </div>
-          ))}
-          {orders.length === 0 && (
+            );
+          })}
+          {currentOrders.length === 0 && (
             <div className="no-results">
-              No se encontraron órdenes
+              {orders.length === 0 ? 'No hay órdenes disponibles' : 'No se encontraron órdenes con los filtros aplicados'}
             </div>
           )}
         </div>
