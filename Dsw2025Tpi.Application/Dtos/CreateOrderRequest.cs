@@ -18,6 +18,7 @@ namespace Dsw2025Tpi.Application.Dtos
         public record ResponseOrder(
             Guid OrderId,
             string CustomerId,
+            string CustomerName,
             string ShippingAddress,
             string BillingAddress,
             DateTime CreatedAt,
