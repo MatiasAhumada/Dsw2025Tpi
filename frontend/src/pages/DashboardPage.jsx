@@ -36,7 +36,6 @@ export default function DashboardPage() {
       const payload = JSON.parse(atob(token.split('.')[1]));
       setUserName(payload.unique_name || "Admin");
     } catch (error) {
-      console.error("Error al decodificar token:", error);
       setUserName("Admin");
     }
     
@@ -53,14 +52,14 @@ export default function DashboardPage() {
         const productsRes = await api.get('/products/all');
         productsCount = Array.isArray(productsRes.data) ? productsRes.data.length : 0;
       } catch (error) {
-        console.error("Error al obtener productos:", error);
+        
       }
       
       try {
         const ordersRes = await api.get('/orders');
         ordersCount = ordersRes.data.totalCount || 0;
       } catch (error) {
-        console.error("Error al obtener órdenes:", error);
+        
       }
       
       setStats({
@@ -68,7 +67,7 @@ export default function DashboardPage() {
         orders: ordersCount
       });
     } catch (error) {
-      console.error("Error al obtener estadísticas:", error);
+      
     } finally {
       setLoading(false);
     }

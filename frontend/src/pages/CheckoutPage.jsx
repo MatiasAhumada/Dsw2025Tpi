@@ -124,7 +124,7 @@ export default function CheckoutPage() {
 
         <div className="grid md:grid-cols-2 gap-8">
           {/* Resumen del pedido */}
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-500">
+          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
             <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
               Resumen del Pedido
             </h3>
@@ -135,16 +135,16 @@ export default function CheckoutPage() {
                     <h4 className="font-medium text-gray-800">{item.name}</h4>
                     <p className="text-sm text-gray-600">${item.currentUnitPrice} x {item.quantity}</p>
                   </div>
-                  <div className="text-lg font-semibold text-purple-600">
+                  <div className="text-lg font-semibold text-blue-600">
                     ${(item.currentUnitPrice * item.quantity).toFixed(2)}
                   </div>
                 </div>
               ))}
             </div>
-            <div className="mt-6 pt-4 border-t-2 border-purple-200">
+            <div className="mt-6 pt-4 border-t-2 border-blue-200">
               <div className="flex justify-between items-center">
                 <span className="text-xl font-bold text-gray-800">Total:</span>
-                <span className="text-2xl font-bold text-purple-600">${getTotalPrice().toFixed(2)}</span>
+                <span className="text-2xl font-bold text-blue-600">${getTotalPrice().toFixed(2)}</span>
               </div>
             </div>
           </div>

@@ -28,7 +28,6 @@ export default function AdminProductsPage() {
       const payload = JSON.parse(atob(token.split('.')[1]));
       setUserName(payload.unique_name || "Admin");
     } catch (error) {
-      console.error("Error al decodificar token:", error);
       setUserName("Admin");
     }
     
@@ -59,7 +58,6 @@ export default function AdminProductsPage() {
       const response = await api.get('/products/all');
       setProducts(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
-      console.error("Error al cargar productos:", error);
       setProducts([]);
     } finally {
       setLoading(false);
@@ -74,7 +72,6 @@ export default function AdminProductsPage() {
       fetchProducts();
       alert("Producto deshabilitado exitosamente");
     } catch (error) {
-      console.error("Error al deshabilitar producto:", error);
       alert("Error de conexión: " + error.message);
     }
   };
@@ -87,7 +84,6 @@ export default function AdminProductsPage() {
       fetchProducts();
       alert("Producto activado exitosamente");
     } catch (error) {
-      console.error("Error al activar producto:", error);
       alert("Error de conexión: " + error.message);
     }
   };

@@ -33,7 +33,6 @@ export default function AdminOrdersPage() {
       const payload = JSON.parse(atob(token.split('.')[1]));
       setUserName(payload.unique_name || "Admin");
     } catch (error) {
-      console.error("Error al decodificar token:", error);
       setUserName("Admin");
     }
     
@@ -61,7 +60,6 @@ export default function AdminOrdersPage() {
       setTotalPages(response.data.totalPages || 0);
       setTotalCount(response.data.totalCount || 0);
     } catch (error) {
-      console.error("Error al cargar órdenes:", error);
       setOrders([]);
       setTotalPages(0);
       setTotalCount(0);
@@ -96,7 +94,7 @@ export default function AdminOrdersPage() {
       setCopiedId(orderId);
       setTimeout(() => setCopiedId(null), 2000);
     } catch (error) {
-      console.error('Error al copiar:', error);
+      
     }
   };
 
@@ -107,8 +105,6 @@ export default function AdminOrdersPage() {
       }
     };
   }, [searchTimeout]);
-
-
 
   function handleLogout() {
     localStorage.clear();
