@@ -8,6 +8,7 @@ export default function DashboardPage() {
   const [stats, setStats] = useState({ products: 0, orders: 0 });
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState("general");
+  const [userName, setUserName] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -22,6 +23,15 @@ export default function DashboardPage() {
       localStorage.clear();
       navigate("/login");
       return;
+    }
+    
+    
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      setUserName(payload.unique_name || "Admin");
+    } catch (error) {
+      console.error("Error al decodificar token:", error);
+      setUserName("Admin");
     }
     
     fetchStats();
@@ -165,6 +175,9 @@ export default function DashboardPage() {
           </li>
         </ul>
         <div className="sidebar-footer">
+          <div className="user-info">
+            <span className="user-name">{userName}</span>
+          </div>
           <button onClick={handleLogout} className="logout-btn">
             Cerrar Sesión
           </button>

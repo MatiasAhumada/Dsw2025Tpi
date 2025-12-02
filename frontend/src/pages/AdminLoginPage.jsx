@@ -52,7 +52,6 @@ export default function AdminLoginPage() {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
-            {errorMsg && <p className="text-red-500 text-sm mt-1">Error</p>}
           </div>
 
           <div>
@@ -64,8 +63,13 @@ export default function AdminLoginPage() {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
-            {errorMsg && <p className="text-red-500 text-sm mt-1">Error</p>}
           </div>
+
+          {errorMsg && (
+            <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+              {errorMsg}
+            </div>
+          )}
 
           <div className="space-y-3">
             <button
@@ -78,6 +82,7 @@ export default function AdminLoginPage() {
             
             <button
               type="button"
+              onClick={() => navigate("/admin/register")}
               className="w-full bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-2 px-4 rounded-md transition duration-200"
             >
               Registrar Usuario
@@ -85,11 +90,7 @@ export default function AdminLoginPage() {
           </div>
         </form>
 
-        {errorMsg && (
-          <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-            {errorMsg}
-          </div>
-        )}
+
       </div>
     </div>
   );
