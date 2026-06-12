@@ -1,0 +1,56 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "MedicalAppointments.Presenter/1.0.0": {
+        "dependencies": {
+          "MedicalAppointments.Application": "1.0.0",
+          "MedicalAppointments.Domain": "1.0.0"
+        },
+        "runtime": {
+          "MedicalAppointments.Presenter.dll": {}
+        }
+      },
+      "MedicalAppointments.Application/1.0.0": {
+        "dependencies": {
+          "MedicalAppointments.Domain": "1.0.0"
+        },
+        "runtime": {
+          "MedicalAppointments.Application.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "MedicalAppointments.Domain/1.0.0": {
+        "runtime": {
+          "MedicalAppointments.Domain.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "MedicalAppointments.Presenter/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "MedicalAppointments.Application/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "MedicalAppointments.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

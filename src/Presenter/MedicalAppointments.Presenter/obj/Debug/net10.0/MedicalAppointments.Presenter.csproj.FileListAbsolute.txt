@@ -1,0 +1,17 @@
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Presenter/MedicalAppointments.Presenter/bin/Debug/net10.0/MedicalAppointments.Presenter.deps.json
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Presenter/MedicalAppointments.Presenter/bin/Debug/net10.0/MedicalAppointments.Presenter.dll
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Presenter/MedicalAppointments.Presenter/bin/Debug/net10.0/MedicalAppointments.Presenter.pdb
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Presenter/MedicalAppointments.Presenter/bin/Debug/net10.0/MedicalAppointments.Application.dll
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Presenter/MedicalAppointments.Presenter/bin/Debug/net10.0/MedicalAppointments.Domain.dll
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Presenter/MedicalAppointments.Presenter/bin/Debug/net10.0/MedicalAppointments.Domain.pdb
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Presenter/MedicalAppointments.Presenter/bin/Debug/net10.0/MedicalAppointments.Application.pdb
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Presenter/MedicalAppointments.Presenter/obj/Debug/net10.0/MedicalAppointments.Presenter.csproj.AssemblyReference.cache
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Presenter/MedicalAppointments.Presenter/obj/Debug/net10.0/MedicalAppointments.Presenter.GeneratedMSBuildEditorConfig.editorconfig
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Presenter/MedicalAppointments.Presenter/obj/Debug/net10.0/MedicalAppointments.Presenter.AssemblyInfoInputs.cache
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Presenter/MedicalAppointments.Presenter/obj/Debug/net10.0/MedicalAppointments.Presenter.AssemblyInfo.cs
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Presenter/MedicalAppointments.Presenter/obj/Debug/net10.0/MedicalAppointments.Presenter.csproj.CoreCompileInputs.cache
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Presenter/MedicalAppointments.Presenter/obj/Debug/net10.0/MedicalA.AE937064.Up2Date
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Presenter/MedicalAppointments.Presenter/obj/Debug/net10.0/MedicalAppointments.Presenter.dll
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Presenter/MedicalAppointments.Presenter/obj/Debug/net10.0/refint/MedicalAppointments.Presenter.dll
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Presenter/MedicalAppointments.Presenter/obj/Debug/net10.0/MedicalAppointments.Presenter.pdb
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Presenter/MedicalAppointments.Presenter/obj/Debug/net10.0/ref/MedicalAppointments.Presenter.dll

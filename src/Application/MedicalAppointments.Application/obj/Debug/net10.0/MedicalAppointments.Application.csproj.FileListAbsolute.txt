@@ -1,0 +1,15 @@
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Application/MedicalAppointments.Application/bin/Debug/net10.0/MedicalAppointments.Application.deps.json
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Application/MedicalAppointments.Application/bin/Debug/net10.0/MedicalAppointments.Application.dll
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Application/MedicalAppointments.Application/bin/Debug/net10.0/MedicalAppointments.Application.pdb
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Application/MedicalAppointments.Application/bin/Debug/net10.0/MedicalAppointments.Domain.dll
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Application/MedicalAppointments.Application/bin/Debug/net10.0/MedicalAppointments.Domain.pdb
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Application/MedicalAppointments.Application/obj/Debug/net10.0/MedicalAppointments.Application.csproj.AssemblyReference.cache
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Application/MedicalAppointments.Application/obj/Debug/net10.0/MedicalAppointments.Application.GeneratedMSBuildEditorConfig.editorconfig
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Application/MedicalAppointments.Application/obj/Debug/net10.0/MedicalAppointments.Application.AssemblyInfoInputs.cache
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Application/MedicalAppointments.Application/obj/Debug/net10.0/MedicalAppointments.Application.AssemblyInfo.cs
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Application/MedicalAppointments.Application/obj/Debug/net10.0/MedicalAppointments.Application.csproj.CoreCompileInputs.cache
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Application/MedicalAppointments.Application/obj/Debug/net10.0/MedicalA.73820AF9.Up2Date
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Application/MedicalAppointments.Application/obj/Debug/net10.0/MedicalAppointments.Application.dll
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Application/MedicalAppointments.Application/obj/Debug/net10.0/refint/MedicalAppointments.Application.dll
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Application/MedicalAppointments.Application/obj/Debug/net10.0/MedicalAppointments.Application.pdb
+/home/matias/Escritorio/DSW/TPI/medical-appointments-tpi/src/Application/MedicalAppointments.Application/obj/Debug/net10.0/ref/MedicalAppointments.Application.dll

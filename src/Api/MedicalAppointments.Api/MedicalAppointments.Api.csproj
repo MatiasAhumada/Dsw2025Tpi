@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Application\MedicalAppointments.Application\MedicalAppointments.Application.csproj" />
+    <ProjectReference Include="..\..\Presenter\MedicalAppointments.Presenter\MedicalAppointments.Presenter.csproj" />
+    <ProjectReference Include="..\..\Data\MedicalAppointments.Data\MedicalAppointments.Data.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+</Project>
